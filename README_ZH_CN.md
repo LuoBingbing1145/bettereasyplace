@@ -21,8 +21,8 @@
 
 - Minecraft 1.20 – 1.20.6
 - Fabric Loader
-- [Litematica](https://www.curseforge.com/minecraft/mc-mods/litematica)
-- [MaLiLib](https://www.curseforge.com/minecraft/mc-mods/malilib)
+- [Litematica](https://modrinth.com/mod/litematica)
+- [MaLiLib](https://modrinth.com/mod/malilib)
 - [ModMenu](https://modrinth.com/mod/modmenu)（可选，用于配置界面）
 
 ## License

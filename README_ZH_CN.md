@@ -11,14 +11,15 @@
 - **允许进食** — 手持食物时可以在轻松放置激活时正常进食
 - **允许使用烟花** — 鞘翅飞行时可以使用烟花火箭加速
 - 可通过 ModMenu 或游戏内配置界面调整（默认快捷键：`B+C`）
+- 更多功能敬请期待……
 
-## 状态
+## 支持版本
 
-本项目目前正在开发中，功能较少，可能存在问题。未来会支持更多 Minecraft 版本。
+- Minecraft 1.20 – 1.20.6
 
 ## 依赖
 
-- Minecraft 1.20.1
+- Minecraft 1.20 – 1.20.6
 - Fabric Loader
 - [Litematica](https://www.curseforge.com/minecraft/mc-mods/litematica)
 - [MaLiLib](https://www.curseforge.com/minecraft/mc-mods/malilib)

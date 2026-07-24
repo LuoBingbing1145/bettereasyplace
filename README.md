@@ -11,14 +11,15 @@ While Easy Place is active, Litematica blocks all right-click actions — includ
 - **Allow Eating** — hold food and eat while Easy Place is active
 - **Allow Firework** — use firework rockets while flying with elytra
 - Configurable via ModMenu or the in-game config GUI (default hotkey: `B+C`)
+- More features coming soon...
 
-## Status
+## Supported Versions
 
-This project is under active development. Features are limited and issues may exist. Additional Minecraft versions will be supported in the future.
+- Minecraft 1.20 – 1.20.6
 
 ## Requirements
 
-- Minecraft 1.20.1
+- Minecraft 1.20 – 1.20.6
 - Fabric Loader
 - [Litematica](https://www.curseforge.com/minecraft/mc-mods/litematica)
 - [MaLiLib](https://www.curseforge.com/minecraft/mc-mods/malilib)

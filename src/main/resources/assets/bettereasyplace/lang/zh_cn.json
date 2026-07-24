@@ -5,6 +5,10 @@
   "bettereasyplace.hotkeys.category.general": "更好的轻松放置",
   "config.name.openconfiggui": "打开配置界面",
   "config.comment.openconfiggui": "打开 更好的轻松放置 配置界面。",
+  "config.name.alloweating": "允许进食",
+  "config.comment.alloweating": "启用后，手持食物进食时将不会被轻松放置模式阻止。",
+  "config.name.allowfirework": "允许使用烟花",
+  "config.comment.allowfirework": "启用后，使用鞘翅飞行时使用烟花将不会被轻松放置模式阻止。",
   "modmenu.nameTranslation.bettereasyplace": "更好的轻松放置",
   "modmenu.descriptionTranslation.bettereasyplace": "一个改进 Litematica 的轻松放置功能的模组"
 }

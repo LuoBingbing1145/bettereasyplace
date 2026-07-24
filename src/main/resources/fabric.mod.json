@@ -11,7 +11,7 @@
 		"sources": "https://github.com/LuoBingbing1145/bettereasyplace",
 		"issues": "https://github.com/LuoBingbing1145/bettereasyplace/issues"
 	},
-	"license": "CC0-1.0",
+	"license": "MIT",
 	"icon": "assets/bettereasyplace/icon.png",
 	"environment": "*",
 	"entrypoints": {

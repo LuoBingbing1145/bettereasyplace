@@ -27,4 +27,4 @@ While Easy Place is active, Litematica blocks all right-click actions — includ
 
 ## License
 
-CC0-1.0
+MIT

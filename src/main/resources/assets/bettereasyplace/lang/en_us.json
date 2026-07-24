@@ -4,5 +4,7 @@
   "bettereasyplace.gui.button.configs.hotkeys": "Hotkeys",
   "bettereasyplace.hotkeys.category.general": "Better Easy Place",
   "config.name.openconfiggui": "Open Config GUI",
-  "config.comment.openconfiggui": "Opens the BetterEasyPlace configuration GUI."
+  "config.comment.openconfiggui": "Opens the BetterEasyPlace configuration GUI.",
+  "modmenu.nameTranslation.bettereasyplace": "Better Easy Place",
+  "modmenu.descriptionTranslation.bettereasyplace": "A mod that improves the easy place functionality of Litematica"
 }

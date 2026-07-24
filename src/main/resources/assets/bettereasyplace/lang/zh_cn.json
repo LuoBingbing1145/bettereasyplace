@@ -1,8 +1,10 @@
 {
-  "bettereasyplace.gui.title.configs": "Better Easy Place 配置",
+  "bettereasyplace.gui.title.configs": "更好的轻松放置 配置",
   "bettereasyplace.gui.button.configs.generic": "通用",
   "bettereasyplace.gui.button.configs.hotkeys": "快捷键",
-  "bettereasyplace.hotkeys.category.general": "Better Easy Place",
+  "bettereasyplace.hotkeys.category.general": "更好的轻松放置",
   "config.name.openconfiggui": "打开配置界面",
-  "config.comment.openconfiggui": "打开 BetterEasyPlace 配置界面。"
+  "config.comment.openconfiggui": "打开 更好的轻松放置 配置界面。",
+  "modmenu.nameTranslation.bettereasyplace": "更好的轻松放置",
+  "modmenu.descriptionTranslation.bettereasyplace": "一个改进 Litematica 的轻松放置功能的模组"
 }

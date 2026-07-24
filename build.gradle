@@ -36,6 +36,7 @@ dependencies {
 	modImplementation "maven.modrinth:GcWjdA9I:${project.malilib_version_id}"//malilib
 	modImplementation "maven.modrinth:bEpr0Arc:${project.litematica_version_id}"//litematica
 	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}+${project.minecraft_version}"
 }
 
 processResources {

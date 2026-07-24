@@ -4,6 +4,7 @@ import fi.dy.masa.litematica.util.WorldUtils;
 import me.lbb.bettereasyplace.config.Configs;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.FireworkRocketItem;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -149,7 +150,8 @@ public abstract class MixinLitematicaWorldUtils {
         ItemStack mainHand = player.getMainHandItem();
         ItemStack offHand = player.getOffhandItem();
 
-        return mainHand.getItem().isEdible() || offHand.getItem().isEdible();
+        // 1.20.5+ 食物改用 DataComponent, isEdible() 已移除 / Food uses DataComponent in 1.20.5+
+        return mainHand.has(DataComponents.FOOD) || offHand.has(DataComponents.FOOD);
     }
 
     /**

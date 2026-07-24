@@ -20,6 +20,9 @@
 		],
 		"client": [
 			"me.lbb.bettereasyplace.client.BetterEasyPlaceClient"
+		],
+		"modmenu": [
+			"me.lbb.bettereasyplace.compat.modmenu.ModMenuImpl"
 		]
 	},
 	"mixins": [

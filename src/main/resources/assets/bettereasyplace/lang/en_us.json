@@ -1,0 +1,8 @@
+{
+  "bettereasyplace.gui.title.configs": "Better Easy Place Configs",
+  "bettereasyplace.gui.button.configs.generic": "Generic",
+  "bettereasyplace.gui.button.configs.hotkeys": "Hotkeys",
+  "bettereasyplace.hotkeys.category.general": "Better Easy Place",
+  "config.name.openconfiggui": "Open Config GUI",
+  "config.comment.openconfiggui": "Opens the BetterEasyPlace configuration GUI."
+}

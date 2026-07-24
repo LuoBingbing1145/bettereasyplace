@@ -10,10 +10,10 @@ repositories {
 	maven { url 'https://masa.dy.fi/maven' }
 	maven { url 'https://maven.terraformersmc.com/releases/' }
 	maven {
-		name = 'Modrinth'
-		url = 'https://api.modrinth.com/maven'
+		name = 'CurseMaven'
+		url = 'https://www.cursemaven.com'
 		content {
-			includeGroup 'maven.modrinth'
+			includeGroup 'curse.maven'
 		}
 	}
 }
@@ -34,7 +34,7 @@ dependencies {
 	mappings loom.officialMojangMappings()
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	modImplementation "fi.dy.masa.malilib:malilib-fabric-${project.minecraft_version}:${project.malilib_version}"
-	modImplementation "maven.modrinth:litematica:${project.litematica_version}"
+	modImplementation "curse.maven:litematica-${project.litematica_project_id}:${project.litematica_file_id}"
 	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 }
 

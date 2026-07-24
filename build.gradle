@@ -58,22 +58,6 @@ java {
 	targetCompatibility = JavaVersion.VERSION_17
 }
 
-def buildCounterFile = file("$projectDir/build-counter.txt")
-def buildNumber = 0
-if (buildCounterFile.exists()) {
-	buildNumber = buildCounterFile.text.trim().toInteger()
-}
-buildNumber++
-buildCounterFile.text = buildNumber.toString()
-
-remapJar {
-	archiveFileName.set("${project.name}-${project.mod_version}+build${buildNumber}.jar")
-}
-
-remapSourcesJar {
-	archiveFileName.set("${project.name}-${project.mod_version}+build${buildNumber}-sources.jar")
-}
-
 jar {
 	def projectName = project.name
 	inputs.property "projectName", projectName

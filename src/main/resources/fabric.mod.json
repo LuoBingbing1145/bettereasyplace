@@ -1,0 +1,42 @@
+{
+	"schemaVersion": 1,
+	"id": "bettereasyplace",
+	"version": "${version}",
+	"name": "BetterEasyPlace",
+	"description": "A mod that improves the easy place functionality of Litematica",
+	"authors": [
+		"LBB285"
+	],
+	"contact": {
+		"sources": "https://github.com/LuoBingbing1145/bettereasyplace",
+		"issues": "https://github.com/LuoBingbing1145/bettereasyplace/issues"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/bettereasyplace/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"me.lbb.bettereasyplace.BetterEasyPlace"
+		],
+		"client": [
+			"me.lbb.bettereasyplace.client.BetterEasyPlaceClient"
+		]
+	},
+	"mixins": [
+		"bettereasyplace.mixins.json",
+		{
+			"config": "bettereasyplace.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": "*",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"litematica": "*",
+		"malilib": "*"
+	},
+	"suggests": {
+		"modmenu": "*"
+	}
+}

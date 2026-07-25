@@ -37,7 +37,7 @@ public class Configs implements IConfigHandler {
      */
     public static final ConfigBoolean ALLOW_EATING = new ConfigBoolean(
             "allowEating",
-            true,
+            false,
             "If enabled, holding food and eating will not be blocked by Easy Place")
             .apply("bettereasyplace.config");
 
@@ -50,7 +50,7 @@ public class Configs implements IConfigHandler {
      */
     public static final ConfigBoolean ALLOW_FIREWORK = new ConfigBoolean(
             "allowFirework",
-            true,
+            false,
             "If enabled, using fireworks while flying with elytra will not be blocked by Easy Place")
             .apply("bettereasyplace.config");
 

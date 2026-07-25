@@ -36,7 +36,7 @@ public class Configs implements IConfigHandler {
      */
     public static final ConfigBoolean ALLOW_EATING = new ConfigBoolean(
             "allowEating",
-            true,
+            false,
             "If enabled, holding food and eating will not be blocked by Easy Place");
 
     /**
@@ -48,7 +48,7 @@ public class Configs implements IConfigHandler {
      */
     public static final ConfigBoolean ALLOW_FIREWORK = new ConfigBoolean(
             "allowFirework",
-            true,
+            false,
             "If enabled, using fireworks while flying with elytra will not be blocked by Easy Place");
 
     /** 所有通用配置项的不可变列表，用于批量读写 / Immutable list of all generic options for batch read/write. */

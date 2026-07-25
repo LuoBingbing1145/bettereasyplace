@@ -1,18 +1,18 @@
 package me.lbb.bettereasyplace.config;
 
-import java.io.File;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import fi.dy.masa.malilib.config.ConfigUtils;
 import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.config.IConfigHandler;
-import fi.dy.masa.malilib.config.options.ConfigBoolean;
 import fi.dy.masa.malilib.config.options.ConfigBooleanHotkeyed;
 import fi.dy.masa.malilib.config.options.ConfigStringList;
 import fi.dy.masa.malilib.util.FileUtils;
 import fi.dy.masa.malilib.util.JsonUtils;
 import me.lbb.bettereasyplace.Reference;
+
+import java.io.File;
 
 /**
  * 模组配置管理 / Mod configuration manager.
@@ -36,9 +36,10 @@ public class Configs implements IConfigHandler {
      * When enabled, right-clicking to eat while holding food will not be
      * blocked by Easy Place mode.
      */
-    public static final ConfigBoolean ALLOW_EATING = new ConfigBoolean(
+    public static final ConfigBooleanHotkeyed ALLOW_EATING = new ConfigBooleanHotkeyed(
             "allowEating",
             false,
+            "",
             "If enabled, holding food and eating will not be blocked by Easy Place");
 
     /**
@@ -48,9 +49,10 @@ public class Configs implements IConfigHandler {
      * When enabled, right-clicking to use a firework rocket while flying with
      * an elytra will not be blocked by Easy Place mode.
      */
-    public static final ConfigBoolean ALLOW_FIREWORK = new ConfigBoolean(
+    public static final ConfigBooleanHotkeyed ALLOW_FIREWORK = new ConfigBooleanHotkeyed(
             "allowFirework",
             false,
+            "",
             "If enabled, using fireworks while flying with elytra will not be blocked by Easy Place");
 
     /**
@@ -60,9 +62,10 @@ public class Configs implements IConfigHandler {
      * When enabled, blocks in the blacklist will not be blocked by Easy Place
      * mode and can be placed directly.
      */
-    public static final ConfigBoolean ENABLE_BLOCK_BLACKLIST = new ConfigBoolean(
+    public static final ConfigBooleanHotkeyed ENABLE_BLOCK_BLACKLIST = new ConfigBooleanHotkeyed(
             "enableBlockBlacklist",
             false,
+            "",
             "If enabled, blocks in the blacklist will not be blocked by Easy Place");
 
     /**

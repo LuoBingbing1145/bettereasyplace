@@ -9,6 +9,10 @@
   "bettereasyplace.config.comment.allowEating": "启用后，手持食物进食时将不会被轻松放置模式阻止。",
   "bettereasyplace.config.name.allowFirework": "允许使用烟花",
   "bettereasyplace.config.comment.allowFirework": "启用后，使用鞘翅飞行时使用烟花将不会被轻松放置模式阻止。",
+  "bettereasyplace.name.enableblockblacklist": "启用方块黑名单",
+  "bettereasyplace.comment.enableblockblacklist": "启用后，黑名单中的方块将不会被轻松放置模式拦截。",
+  "bettereasyplace.name.blockblacklist": "方块黑名单",
+  "bettereasyplace.comment.blockblacklist": "黑名单中的方块在轻松放置模式下不会被拦截（每行一个方块 ID，如 minecraft:chest）。",
   "modmenu.nameTranslation.bettereasyplace": "更好的轻松放置",
   "modmenu.descriptionTranslation.bettereasyplace": "一个改进 Litematica 的轻松放置功能的模组"
 }

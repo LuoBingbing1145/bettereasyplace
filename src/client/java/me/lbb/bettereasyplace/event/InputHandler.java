@@ -10,6 +10,8 @@ import me.lbb.bettereasyplace.Reference;
 import me.lbb.bettereasyplace.config.Hotkeys;
 import me.lbb.bettereasyplace.gui.GuiConfigs;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -87,8 +89,8 @@ public class InputHandler implements IKeybindProvider, IKeyboardInputHandler, IM
      * processing), leaving room for future expansion.
      */
     @Override
-    public boolean onKeyInput(int keyCode, int scanCode, int modifiers, boolean eventKeyState) {
-        return IKeyboardInputHandler.super.onKeyInput(keyCode, scanCode, modifiers, eventKeyState);
+    public boolean onKeyInput(KeyEvent event, boolean eventKeyState) {
+        return IKeyboardInputHandler.super.onKeyInput(event, eventKeyState);
     }
 
     /**
@@ -99,8 +101,8 @@ public class InputHandler implements IKeybindProvider, IKeyboardInputHandler, IM
      * processing), leaving room for future expansion.
      */
     @Override
-    public boolean onMouseClick(int mouseX, int mouseY, int eventButton, boolean eventButtonState) {
-        return IMouseInputHandler.super.onMouseClick(mouseX, mouseY, eventButton, eventButtonState);
+    public boolean onMouseClick(MouseButtonEvent event, boolean eventButtonState) {
+        return IMouseInputHandler.super.onMouseClick(event, eventButtonState);
     }
 
     /**
@@ -111,7 +113,7 @@ public class InputHandler implements IKeybindProvider, IKeyboardInputHandler, IM
      * processing), leaving room for future expansion.
      */
     @Override
-    public boolean onMouseScroll(int mouseX, int mouseY, double amount) {
-        return IMouseInputHandler.super.onMouseScroll(mouseX, mouseY, amount);
+    public boolean onMouseScroll(double horizontalAmount, double verticalAmount, double mouseDelta) {
+        return IMouseInputHandler.super.onMouseScroll(horizontalAmount, verticalAmount, mouseDelta);
     }
 }

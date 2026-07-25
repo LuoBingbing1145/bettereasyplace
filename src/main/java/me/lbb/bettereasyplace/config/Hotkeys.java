@@ -26,7 +26,8 @@ public class Hotkeys implements IKeybindProvider {
     public static final ConfigHotkey OPEN_CONFIG_GUI = new ConfigHotkey(
             "openConfigGui",
             "B,C",
-            "Opens the BetterEasyPlace configuration GUI");
+            "Opens the BetterEasyPlace configuration GUI")
+            .apply("bettereasyplace.hotkeys");
 
     /** 所有快捷键的不可变列表 / Immutable list of all hotkeys. */
     public static final List<IHotkey> HOTKEY_LIST = ImmutableList.of(OPEN_CONFIG_GUI);

@@ -1,6 +1,7 @@
 package me.lbb.bettereasyplace.config;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -37,7 +38,8 @@ public class Configs implements IConfigHandler {
     public static final ConfigBoolean ALLOW_EATING = new ConfigBoolean(
             "allowEating",
             true,
-            "If enabled, holding food and eating will not be blocked by Easy Place");
+            "If enabled, holding food and eating will not be blocked by Easy Place")
+            .apply("bettereasyplace.config");
 
     /**
      * 允许使用烟花 / Allow Firework.
@@ -49,7 +51,8 @@ public class Configs implements IConfigHandler {
     public static final ConfigBoolean ALLOW_FIREWORK = new ConfigBoolean(
             "allowFirework",
             true,
-            "If enabled, using fireworks while flying with elytra will not be blocked by Easy Place");
+            "If enabled, using fireworks while flying with elytra will not be blocked by Easy Place")
+            .apply("bettereasyplace.config");
 
     /** 所有通用配置项的不可变列表，用于批量读写 / Immutable list of all generic options for batch read/write. */
     public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
@@ -64,10 +67,10 @@ public class Configs implements IConfigHandler {
      * Reads options under both the {@code Generic} and {@code Hotkeys} categories.
      */
     public static void loadFromFile() {
-        File configFile = new File(FileUtils.getConfigDirectory(), CONFIG_FILE_NAME);
+        Path configFile = FileUtils.getConfigDirectoryAsPath().resolve(CONFIG_FILE_NAME);
 
-        if (configFile.exists() && configFile.isFile() && configFile.canRead()) {
-            JsonElement element = JsonUtils.parseJsonFile(configFile);
+        if (Files.exists(configFile) && Files.isRegularFile(configFile) && Files.isReadable(configFile)) {
+            JsonElement element = JsonUtils.parseJsonFileAsPath(configFile);
 
             if (element != null && element.isJsonObject()) {
                 JsonObject root = element.getAsJsonObject();
@@ -86,15 +89,15 @@ public class Configs implements IConfigHandler {
      * into the JSON file.
      */
     public static void saveToFile() {
-        File dir = FileUtils.getConfigDirectory();
+        Path dir = FileUtils.getConfigDirectoryAsPath();
 
-        if ((dir.exists() && dir.isDirectory()) || dir.mkdirs()) {
+        if (FileUtils.createDirectoriesIfMissing(dir)) {
             JsonObject root = new JsonObject();
 
             ConfigUtils.writeConfigBase(root, "Generic", OPTIONS);
             ConfigUtils.writeConfigBase(root, "Hotkeys", Hotkeys.HOTKEY_LIST);
 
-            JsonUtils.writeJsonToFile(root, new File(dir, CONFIG_FILE_NAME));
+            JsonUtils.writeJsonToFileAsPath(root, dir.resolve(CONFIG_FILE_NAME));
         }
     }
 

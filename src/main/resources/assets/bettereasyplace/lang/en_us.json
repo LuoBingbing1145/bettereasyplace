@@ -3,12 +3,12 @@
   "bettereasyplace.gui.button.configs.generic": "Generic",
   "bettereasyplace.gui.button.configs.hotkeys": "Hotkeys",
   "bettereasyplace.hotkeys.category.general": "Better Easy Place",
-  "config.name.openconfiggui": "Open Config GUI",
-  "config.comment.openconfiggui": "Opens the BetterEasyPlace configuration GUI.",
-  "config.name.alloweating": "Allow Eating",
-  "config.comment.alloweating": "If enabled, holding food and eating will not be blocked by Easy Place mode.",
-  "config.name.allowfirework": "Allow Firework",
-  "config.comment.allowfirework": "If enabled, using fireworks while flying with elytra will not be blocked by Easy Place mode.",
+  "bettereasyplace.hotkeys.name.openConfigGui": "Open Config GUI",
+  "bettereasyplace.hotkeys.comment.openConfigGui": "Opens the BetterEasyPlace configuration GUI.",
+  "bettereasyplace.config.name.allowEating": "Allow Eating",
+  "bettereasyplace.config.comment.allowEating": "If enabled, holding food and eating will not be blocked by Easy Place mode.",
+  "bettereasyplace.config.name.allowFirework": "Allow Firework",
+  "bettereasyplace.config.comment.allowFirework": "If enabled, using fireworks while flying with elytra will not be blocked by Easy Place mode.",
   "modmenu.nameTranslation.bettereasyplace": "Better Easy Place",
   "modmenu.descriptionTranslation.bettereasyplace": "A mod that improves the easy place functionality of Litematica"
 }

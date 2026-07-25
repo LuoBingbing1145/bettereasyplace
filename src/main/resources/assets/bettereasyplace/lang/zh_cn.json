@@ -9,10 +9,12 @@
   "config.comment.alloweating": "启用后，手持食物进食时将不会被轻松放置模式阻止。",
   "config.name.allowfirework": "允许使用烟花",
   "config.comment.allowfirework": "启用后，使用鞘翅飞行时使用烟花将不会被轻松放置模式阻止。",
-  "config.name.enableblockblacklist": "启用方块黑名单",
+  "config.name.enableblockblacklist": "启用拦截方块黑名单",
   "config.comment.enableblockblacklist": "启用后，黑名单中的方块将不会被轻松放置模式拦截。",
   "config.name.blockblacklist": "方块黑名单",
   "config.comment.blockblacklist": "黑名单中的方块在轻松放置模式下不会被拦截（每行一个方块 ID，如 minecraft:chest）。",
+  "config.name.allowinteraction": "允许与方块互动",
+  "config.comment.allowinteraction": "启用后，轻松放置模式下右键交互方块（开箱子、拉拉杆、按按钮、点击音符盒等）不会被拦截（§c⚠ 可能导致建造时意外触发方块状态更新，对周围造成破坏！）",
   "modmenu.nameTranslation.bettereasyplace": "更好的轻松放置",
   "modmenu.descriptionTranslation.bettereasyplace": "一个改进 Litematica 的轻松放置功能的模组"
 }

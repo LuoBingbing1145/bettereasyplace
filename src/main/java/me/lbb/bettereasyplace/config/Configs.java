@@ -8,6 +8,7 @@ import fi.dy.masa.malilib.config.ConfigUtils;
 import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.config.IConfigHandler;
 import fi.dy.masa.malilib.config.options.ConfigBoolean;
+import fi.dy.masa.malilib.config.options.ConfigBooleanHotkeyed;
 import fi.dy.masa.malilib.config.options.ConfigStringList;
 import fi.dy.masa.malilib.util.FileUtils;
 import fi.dy.masa.malilib.util.JsonUtils;
@@ -53,7 +54,7 @@ public class Configs implements IConfigHandler {
             "If enabled, using fireworks while flying with elytra will not be blocked by Easy Place");
 
     /**
-     * 启用方块黑名单 / Enable Block Blacklist.
+     * 启用拦截方块黑名单 / Enable Block Blacklist.
      * <p>
      * 启用后，黑名单中的方块将不会被轻松放置模式拦截，允许直接放置。
      * When enabled, blocks in the blacklist will not be blocked by Easy Place
@@ -67,7 +68,7 @@ public class Configs implements IConfigHandler {
     /**
      * 方块黑名单 / Block Blacklist.
      * <p>
-     * 轻鬆放置模式下不会被拦截的方块 ID 列表（每行一个，如 {@code minecraft:chest}）。
+     * 轻松放置模式下不会被拦截的方块 ID 列表（每行一个，如 {@code minecraft:chest}）。
      * 仅当 {@link #ENABLE_BLOCK_BLACKLIST} 启用时生效。
      * <p>
      * A list of block IDs (one per line, e.g. {@code minecraft:chest}) that will
@@ -79,10 +80,30 @@ public class Configs implements IConfigHandler {
             ImmutableList.of(),
             "List of block IDs that will not be blocked by Easy Place mode");
 
+    /**
+     * 允许与方块互动 / Allow Block Interaction.
+     * <p>
+     * <b>⚠ 警告 / Warning:</b> 启用后，轻松放置时右键任意方块都会触发原版交互
+     * （如打开箱子、操作拉杆、点击音符盒等），这可能在建造过程中意外触发方块的
+     * 状态更新（如激活红石、打开门等），导致周围方块发生变化。请谨慎使用。
+     * <p>
+     * <b>⚠ Warning:</b> When enabled, right-clicking any block in Easy Place mode
+     * will trigger vanilla interactions (opening chests, toggling levers,
+     * clicking note blocks, etc.).  This may accidentally cause block state
+     * updates during building (e.g. activating redstone, opening doors) which
+     * could alter surrounding blocks. Use with caution.
+     */
+    public static final ConfigBooleanHotkeyed ALLOW_INTERACTION = new ConfigBooleanHotkeyed(
+            "allowInteraction",
+            false,
+            "",
+            "If enabled, right-clicking to interact with blocks will not be blocked by Easy Place (§c⚠ May cause accidental block state updates during building!)");
+
     /** 所有通用配置项的不可变列表，用于批量读写 / Immutable list of all generic options for batch read/write. */
     public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
             ALLOW_EATING,
             ALLOW_FIREWORK,
+            ALLOW_INTERACTION,
             ENABLE_BLOCK_BLACKLIST,
             BLOCK_BLACKLIST
     );

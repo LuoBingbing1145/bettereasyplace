@@ -9,13 +9,25 @@ import net.fabricmc.api.ModInitializer;
  * 模组主入口 / Main mod entry point.
  * <p>
  * BetterEasyPlace 是一个改进 Litematica 轻松放置功能的辅助模组。
- * 它在轻松放置激活时，允许玩家正常进食和使用烟花火箭（鞘翅加速），
- * 解决了轻松放置模式下这些原版操作被拦截的问题。
+ * 它在轻松放置激活时，允许玩家进行多种原版操作：
+ * <ul>
+ *   <li>正常进食（即使轻松放置开启）</li>
+ *   <li>使用烟花火箭进行鞘翅加速</li>
+ *   <li>与所有可交互方块进行原版交互（开箱、拉杆、按钮、音符盒等）</li>
+ *   <li>自定义方块黑名单，不拦截特定方块的放置</li>
+ * </ul>
  * <p>
  * BetterEasyPlace is a companion mod that improves Litematica's Easy Place
- * functionality.  It allows the player to eat food and use firework rockets
- * (for elytra boosting) even when Easy Place is active — solving the problem
- * of those vanilla actions being blocked during Easy Place mode.
+ * functionality.  It allows the player to perform various vanilla actions even
+ * when Easy Place is active:
+ * <ul>
+ *   <li>Eat food normally</li>
+ *   <li>Use firework rockets for elytra boosting</li>
+ *   <li>Interact with all interactable blocks (chests, levers, buttons,
+ *       note blocks, etc.)</li>
+ *   <li>Define a block blacklist to bypass Easy Place interception for
+ *       specific blocks</li>
+ * </ul>
  *
  * @author LBB285
  */

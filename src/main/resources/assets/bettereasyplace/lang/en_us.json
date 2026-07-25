@@ -9,10 +9,12 @@
   "config.comment.alloweating": "If enabled, holding food and eating will not be blocked by Easy Place mode.",
   "config.name.allowfirework": "Allow Firework",
   "config.comment.allowfirework": "If enabled, using fireworks while flying with elytra will not be blocked by Easy Place mode.",
-  "config.name.enableblockblacklist": "Enable Block Blacklist",
+  "config.name.enableblockblacklist": "Enable Blocking Blacklist",
   "config.comment.enableblockblacklist": "If enabled, blocks in the blacklist will not be blocked by Easy Place mode.",
   "config.name.blockblacklist": "Block Blacklist",
   "config.comment.blockblacklist": "Blocks listed here will not be blocked by Easy Place mode (one block ID per line, e.g. minecraft:chest).",
+  "config.name.allowinteraction": "Allow Block Interaction",
+  "config.comment.allowinteraction": "If enabled, right-clicking to interact with blocks will not be blocked by Easy Place (§c⚠ May cause accidental block state updates during building!)",
   "modmenu.nameTranslation.bettereasyplace": "Better Easy Place",
   "modmenu.descriptionTranslation.bettereasyplace": "A mod that improves the easy place functionality of Litematica"
 }

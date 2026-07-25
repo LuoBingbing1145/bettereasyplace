@@ -15,11 +15,11 @@ While Easy Place is active, Litematica blocks all right-click actions — includ
 
 ## Supported Versions
 
-- Minecraft 1.20 – 1.20.6
+- Minecraft 1.20 – 1.21.11
 
 ## Requirements
 
-- Minecraft 1.20 – 1.20.6
+- Minecraft 1.20 – 1.21.11
 - Fabric Loader
 - [Litematica](https://modrinth.com/mod/litematica)
 - [MaLiLib](https://modrinth.com/mod/malilib)

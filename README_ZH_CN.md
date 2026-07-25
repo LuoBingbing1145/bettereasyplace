@@ -15,11 +15,11 @@
 
 ## 支持版本
 
-- Minecraft 1.20 – 1.20.6
+- Minecraft 1.20 – 1.21.11
 
 ## 依赖
 
-- Minecraft 1.20 – 1.20.6
+- Minecraft 1.20 – 1.21.11
 - Fabric Loader
 - [Litematica](https://modrinth.com/mod/litematica)
 - [MaLiLib](https://modrinth.com/mod/malilib)

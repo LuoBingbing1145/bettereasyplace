@@ -1,8 +1,7 @@
 package me.lbb.bettereasyplace.gui;
 
-import java.util.List;
-import fi.dy.masa.malilib.event.InputEventHandler;
 import fi.dy.masa.malilib.config.IConfigBase;
+import fi.dy.masa.malilib.event.InputEventHandler;
 import fi.dy.masa.malilib.gui.GuiConfigsBase;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
@@ -12,6 +11,8 @@ import me.lbb.bettereasyplace.Reference;
 import me.lbb.bettereasyplace.config.Configs;
 import me.lbb.bettereasyplace.config.Hotkeys;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * 模组配置界面 / Mod configuration GUI.

@@ -5,6 +5,8 @@ import me.lbb.bettereasyplace.config.Configs;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.FireworkRocketItem;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -14,6 +16,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.List;
 
 /**
  * 注入 Litematica 的 {@link WorldUtils}，允许在轻松放置激活时进食和使用烟花 /
@@ -115,8 +119,11 @@ public abstract class MixinLitematicaWorldUtils {
             return true;
         }
 
-        // 检查烟花条件 / Check firework condition
-        return shouldAllowFirework(player);
+        if (shouldAllowFirework(player)) {
+            return true;
+        }
+
+        return shouldAllowBlockPlacement(player);
     }
 
     /**
@@ -186,5 +193,49 @@ public abstract class MixinLitematicaWorldUtils {
 
         return mainHand.getItem() instanceof FireworkRocketItem
                 || offHand.getItem() instanceof FireworkRocketItem;
+    }
+
+    /**
+     * 检查是否应允许放置黑名单方块 / Check if placing a blacklisted block should be allowed.
+     * <p>
+     * 同时满足以下条件时返回 {@code true}：
+     * <ol>
+     *   <li>配置项 {@code ENABLE_BLOCK_BLACKLIST} 已启用</li>
+     *   <li>玩家主手或副手持有方块物品</li>
+     *   <li>该方块的注册 ID 在黑名单中</li>
+     * </ol>
+     * Returns {@code true} when ALL of the following conditions are met:
+     * <ol>
+     *   <li>{@code ENABLE_BLOCK_BLACKLIST} config is enabled</li>
+     *   <li>The player holds a block item in main or off hand</li>
+     *   <li>The block's registry ID is in the blacklist</li>
+     * </ol>
+     */
+    @Unique
+    private static boolean shouldAllowBlockPlacement(LocalPlayer player) {
+        if (!Configs.ENABLE_BLOCK_BLACKLIST.getBooleanValue()) {
+            return false;
+        }
+
+        List<String> blacklist = Configs.BLOCK_BLACKLIST.getStrings();
+        if (blacklist.isEmpty()) {
+            return false;
+        }
+
+        ItemStack mainHand = player.getMainHandItem();
+        if (mainHand.getItem() instanceof BlockItem) {
+            String blockId = BuiltInRegistries.ITEM.getKey(mainHand.getItem()).toString();
+            if (blacklist.contains(blockId)) {
+                return true;
+            }
+        }
+
+        ItemStack offHand = player.getOffhandItem();
+        if (offHand.getItem() instanceof BlockItem) {
+            String blockId = BuiltInRegistries.ITEM.getKey(offHand.getItem()).toString();
+            return blacklist.contains(blockId);
+        }
+
+        return false;
     }
 }

@@ -1,7 +1,5 @@
 package me.lbb.bettereasyplace.config;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -9,9 +7,13 @@ import fi.dy.masa.malilib.config.ConfigUtils;
 import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.config.IConfigHandler;
 import fi.dy.masa.malilib.config.options.ConfigBoolean;
+import fi.dy.masa.malilib.config.options.ConfigStringList;
 import fi.dy.masa.malilib.util.FileUtils;
 import fi.dy.masa.malilib.util.JsonUtils;
 import me.lbb.bettereasyplace.Reference;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * 模组配置管理 / Mod configuration manager.
@@ -54,10 +56,41 @@ public class Configs implements IConfigHandler {
             "If enabled, using fireworks while flying with elytra will not be blocked by Easy Place")
             .apply("bettereasyplace.config");
 
+    /**
+     * 启用方块黑名单 / Enable Block Blacklist.
+     * <p>
+     * 启用后，黑名单中的方块将不会被轻松放置模式拦截，允许直接放置。
+     * When enabled, blocks in the blacklist will not be blocked by Easy Place
+     * mode and can be placed directly.
+     */
+    public static final ConfigBoolean ENABLE_BLOCK_BLACKLIST = new ConfigBoolean(
+            "enableBlockBlacklist",
+            false,
+            "If enabled, blocks in the blacklist will not be blocked by Easy Place")
+            .apply("bettereasyplace.config");
+
+    /**
+     * 方块黑名单 / Block Blacklist.
+     * <p>
+     * 轻鬆放置模式下不会被拦截的方块 ID 列表（每行一个，如 {@code minecraft:chest}）。
+     * 仅当 {@link #ENABLE_BLOCK_BLACKLIST} 启用时生效。
+     * <p>
+     * A list of block IDs (one per line, e.g. {@code minecraft:chest}) that will
+     * not be blocked by Easy Place.  Only takes effect when
+     * {@link #ENABLE_BLOCK_BLACKLIST} is enabled.
+     */
+    public static final ConfigStringList BLOCK_BLACKLIST = new ConfigStringList(
+            "blockBlacklist",
+            ImmutableList.of(),
+            "List of block IDs that will not be blocked by Easy Place mode")
+            .apply("bettereasyplace.config");
+
     /** 所有通用配置项的不可变列表，用于批量读写 / Immutable list of all generic options for batch read/write. */
     public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
             ALLOW_EATING,
-            ALLOW_FIREWORK
+            ALLOW_FIREWORK,
+            ENABLE_BLOCK_BLACKLIST,
+            BLOCK_BLACKLIST
     );
 
     /**

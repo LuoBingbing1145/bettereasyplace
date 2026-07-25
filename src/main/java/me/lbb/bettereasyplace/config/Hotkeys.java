@@ -1,6 +1,5 @@
 package me.lbb.bettereasyplace.config;
 
-import java.util.List;
 import com.google.common.collect.ImmutableList;
 import fi.dy.masa.malilib.config.options.ConfigHotkey;
 import fi.dy.masa.malilib.hotkeys.IHotkey;
@@ -8,6 +7,8 @@ import fi.dy.masa.malilib.hotkeys.IKeybindManager;
 import fi.dy.masa.malilib.hotkeys.IKeybindProvider;
 import me.lbb.bettereasyplace.Reference;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * 快捷键定义与注册 / Hotkey definitions and registration.

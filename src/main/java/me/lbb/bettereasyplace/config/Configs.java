@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 import fi.dy.masa.malilib.config.ConfigUtils;
 import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.config.IConfigHandler;
-import fi.dy.masa.malilib.config.options.ConfigBoolean;
+import fi.dy.masa.malilib.config.options.ConfigBooleanHotkeyed;
 import fi.dy.masa.malilib.config.options.ConfigStringList;
 import fi.dy.masa.malilib.util.FileUtils;
 import fi.dy.masa.malilib.util.JsonUtils;
@@ -37,9 +37,10 @@ public class Configs implements IConfigHandler {
      * When enabled, right-clicking to eat while holding food will not be
      * blocked by Easy Place mode.
      */
-    public static final ConfigBoolean ALLOW_EATING = new ConfigBoolean(
+    public static final ConfigBooleanHotkeyed ALLOW_EATING = new ConfigBooleanHotkeyed(
             "allowEating",
             false,
+            "",
             "If enabled, holding food and eating will not be blocked by Easy Place")
             .apply("bettereasyplace.config");
 
@@ -50,28 +51,30 @@ public class Configs implements IConfigHandler {
      * When enabled, right-clicking to use a firework rocket while flying with
      * an elytra will not be blocked by Easy Place mode.
      */
-    public static final ConfigBoolean ALLOW_FIREWORK = new ConfigBoolean(
+    public static final ConfigBooleanHotkeyed ALLOW_FIREWORK = new ConfigBooleanHotkeyed(
             "allowFirework",
             false,
+            "",
             "If enabled, using fireworks while flying with elytra will not be blocked by Easy Place")
             .apply("bettereasyplace.config");
 
     /**
-     * 启用方块黑名单 / Enable Block Blacklist.
+     * 启用拦截方块黑名单 / Enable Block Blacklist.
      * <p>
      * 启用后，黑名单中的方块将不会被轻松放置模式拦截，允许直接放置。
      * When enabled, blocks in the blacklist will not be blocked by Easy Place
      * mode and can be placed directly.
      */
-    public static final ConfigBoolean ENABLE_BLOCK_BLACKLIST = new ConfigBoolean(
+    public static final ConfigBooleanHotkeyed ENABLE_BLOCK_BLACKLIST = new ConfigBooleanHotkeyed(
             "enableBlockBlacklist",
             false,
+            "",
             "If enabled, blocks in the blacklist will not be blocked by Easy Place");
 
     /**
      * 方块黑名单 / Block Blacklist.
      * <p>
-     * 轻鬆放置模式下不会被拦截的方块 ID 列表（每行一个，如 {@code minecraft:chest}）。
+     * 轻松放置模式下不会被拦截的方块 ID 列表（每行一个，如 {@code minecraft:chest}）。
      * 仅当 {@link #ENABLE_BLOCK_BLACKLIST} 启用时生效。
      * <p>
      * A list of block IDs (one per line, e.g. {@code minecraft:chest}) that will

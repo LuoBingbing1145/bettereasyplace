@@ -1,11 +1,7 @@
 package me.lbb.bettereasyplace.event;
 
 import fi.dy.masa.malilib.gui.GuiBase;
-import fi.dy.masa.malilib.hotkeys.IHotkey;
-import fi.dy.masa.malilib.hotkeys.IKeybindManager;
-import fi.dy.masa.malilib.hotkeys.IKeybindProvider;
-import fi.dy.masa.malilib.hotkeys.IKeyboardInputHandler;
-import fi.dy.masa.malilib.hotkeys.IMouseInputHandler;
+import fi.dy.masa.malilib.hotkeys.*;
 import me.lbb.bettereasyplace.Reference;
 import me.lbb.bettereasyplace.config.Hotkeys;
 import me.lbb.bettereasyplace.gui.GuiConfigs;

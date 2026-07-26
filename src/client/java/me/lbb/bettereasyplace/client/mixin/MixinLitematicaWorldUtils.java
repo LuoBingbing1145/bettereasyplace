@@ -17,6 +17,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
@@ -172,16 +173,30 @@ public abstract class MixinLitematicaWorldUtils {
         BlockPos pos = liquidTrace.getBlockPos();
         BlockState stateSchematic = schematicWorld.getBlockState(pos);
 
+        // 提前获取客户端状态 / Get client state early
+        if (mc.level == null) {
+            return;
+        }
+        BlockState stateClient = mc.level.getBlockState(pos);
+
+        // ================================================================
+        // 含水方块处理（独立配置项）/ Waterlogged block handling (separate config)
+        // 原理图中有含水方块时，需要先放水再放方块（或先放方块再含水）
+        // When the schematic has a waterlogged block, we need to place
+        // water first, then the block (or waterlog an existing block)
+        // ================================================================
+        if (Configs.ALLOW_WATERLOGGED_PLACEMENT.getBooleanValue() && isWaterlogged(stateSchematic)) {
+            handleWaterloggedPlacement(mc, player, schematicWorld, pos,
+                    stateSchematic, stateClient, cir);
+            return;
+        }
+
         // 仅处理液体源方块 / Only handle liquid source blocks
         if (!isLiquidSource(stateSchematic)) {
             return;
         }
 
         // 检查是否已在正确位置放置了相同液体 / Check if the same liquid is already placed
-        if (mc.level == null) {
-            return;
-        }
-        BlockState stateClient = mc.level.getBlockState(pos);
         if (stateSchematic.getBlock() == stateClient.getBlock() && isLiquidSource(stateClient)) {
             cir.setReturnValue(InteractionResult.FAIL);
             return;
@@ -252,6 +267,135 @@ public abstract class MixinLitematicaWorldUtils {
         // 更新放置计时，防止下一tick立即再次处理 / Update placement timer
         invokeSetEasyPlaceLastPickBlockTime();
 
+        cir.setReturnValue(InteractionResult.SUCCESS);
+    }
+
+    /**
+     * 处理含水方块的放置 / Handle waterlogged block placement.
+     * <p>
+     * 含水方块需要两个步骤：先放水，再放方块（方块放入水中自动含水）。
+     * 如果方块已放置但未含水，则用水桶右键方块使其含水。
+     * 如果水已放置，让标准轻松放置流程处理方块放置。
+     * <p>
+     * Waterlogged blocks require two steps: place water first, then place the
+     * block (blocks placed in water become waterlogged automatically).
+     * If the block is already placed but not waterlogged, waterlog it with a bucket.
+     * If water is already placed, let the standard easy place flow handle the block.
+     */
+    @Unique
+    private static void handleWaterloggedPlacement(Minecraft mc, LocalPlayer player,
+                                                   WorldSchematic schematicWorld, BlockPos pos, @NotNull BlockState stateSchematic,
+                                                   @NotNull BlockState stateClient, CallbackInfoReturnable<InteractionResult> cir) {
+
+        // 已经完全正确放置（含水方块已就位）/ Already correctly placed
+        if (stateSchematic.getBlock() == stateClient.getBlock() && isWaterlogged(stateClient)) {
+            cir.setReturnValue(InteractionResult.FAIL);
+            return;
+        }
+
+        // 方块已放置但未含水 → 用水桶右键使其含水
+        // Block placed but not waterlogged → waterlog it with a bucket
+        if (stateClient.getBlock() == stateSchematic.getBlock() && !isWaterlogged(stateClient)) {
+            waterlogExistingBlock(mc, player, schematicWorld, pos, cir);
+            return;
+        }
+
+        // 水已放置 → 让标准轻松放置流程处理方块放置
+        // Water is placed → let standard easy place handle block placement
+        if (isLiquidSource(stateClient)) {
+            return; // pass through to standard doEasyPlaceAction
+        }
+
+        // 空位或其他方块 → 先放水
+        // Air or other → place water first
+        placeWaterForWaterlogged(mc, player, schematicWorld, pos, cir);
+    }
+
+    /**
+     * 在含水方块位置先放置水 / Place water first at the waterlogged block position.
+     * <p>
+     * 切换到水桶，直接在原理图坐标放置水源。
+     * 下一 tick 标准轻松放置流程会将方块放入水中自动含水。
+     * <p>
+     * Switch to water bucket and place a water source at the schematic position.
+     * On the next tick the standard easy place flow will place the block in water.
+     */
+    @Unique
+    private static void placeWaterForWaterlogged(Minecraft mc, LocalPlayer player,
+            WorldSchematic schematicWorld, BlockPos pos,
+            CallbackInfoReturnable<InteractionResult> cir) {
+
+        if (invokeEasyPlaceIsPositionCached(pos)) {
+            cir.setReturnValue(InteractionResult.FAIL);
+            return;
+        }
+
+        ItemStack waterBucket = new ItemStack(Items.WATER_BUCKET);
+
+        // 切换到水桶 / Switch to water bucket
+        InventoryUtils.schematicWorldPickBlock(waterBucket, pos, schematicWorld, mc);
+
+        // 验证切换成功 / Verify the switch
+        InteractionHand hand = fi.dy.masa.litematica.util.EntityUtils.getUsedHandForItem(player, waterBucket);
+        if (hand == null) {
+            cir.setReturnValue(InteractionResult.FAIL);
+            return;
+        }
+
+        // 直接在原理图坐标放置水源 / Place water source directly at schematic position
+        ItemStack heldStack = player.getItemInHand(hand);
+        if (heldStack.getItem() instanceof BucketItem bucketItem) {
+            bucketItem.emptyContents(player, mc.level, pos, null);
+        }
+
+        // 发包给服务端并完成物品交换 / Send packet to server and swap item
+        if (mc.gameMode != null) {
+            mc.gameMode.useItem(player, hand);
+        }
+
+        invokeSetEasyPlaceLastPickBlockTime();
+        cir.setReturnValue(InteractionResult.SUCCESS);
+    }
+
+    /**
+     * 用水桶右键已放置的方块使其含水 / Waterlog an already-placed block with a bucket.
+     * <p>
+     * 方块已被标准轻松放置放到原理图位置，但尚未含水。
+     * 切换到水桶并用 useItem 触发原版含水逻辑。
+     * <p>
+     * The block was already placed by standard easy place but is not waterlogged.
+     * Switch to water bucket and use useItem to trigger vanilla waterlogging.
+     */
+    @Unique
+    private static void waterlogExistingBlock(Minecraft mc, LocalPlayer player,
+            WorldSchematic schematicWorld, BlockPos pos,
+            CallbackInfoReturnable<InteractionResult> cir) {
+
+        if (invokeEasyPlaceIsPositionCached(pos)) {
+            cir.setReturnValue(InteractionResult.FAIL);
+            return;
+        }
+
+        ItemStack waterBucket = new ItemStack(Items.WATER_BUCKET);
+
+        // 切换到水桶 / Switch to water bucket
+        InventoryUtils.schematicWorldPickBlock(waterBucket, pos, schematicWorld, mc);
+
+        // 验证切换成功 / Verify the switch
+        InteractionHand hand = fi.dy.masa.litematica.util.EntityUtils.getUsedHandForItem(player, waterBucket);
+        if (hand == null) {
+            cir.setReturnValue(InteractionResult.FAIL);
+            return;
+        }
+
+        // 用原版 useItem 触发含水（BucketItem 检测到 LiquidBlockContainer 会在原位置含水）
+        // Use vanilla useItem to trigger waterlogging (BucketItem detects
+        // LiquidBlockContainer and waterlogs at the clicked position)
+        if (mc.gameMode != null) {
+            mc.gameMode.useItem(player, hand);
+        }
+
+        invokeSetEasyPlaceLastPickBlockTime();
         cir.setReturnValue(InteractionResult.SUCCESS);
     }
 
@@ -580,6 +724,24 @@ public abstract class MixinLitematicaWorldUtils {
     }
 
     /**
+     * 检查方块状态是否为含水方块 / Check if a block state is waterlogged.
+     * <p>
+     * 含水方块是同时包含水和固体方块的方块（如含水台阶、含水楼梯等）。
+     * 在 Minecraft 中通过 {@code WATERLOGGED} 属性标记。
+     * <p>
+     * A waterlogged block contains both water and a solid block (e.g. waterlogged
+     * slabs, stairs, etc.).  Marked by the {@code WATERLOGGED} property in Minecraft.
+     *
+     * @param state 待检查的方块状态 / the block state to check
+     * @return true 如果是含水方块 / true if the block is waterlogged
+     */
+    @Unique
+    private static boolean isWaterlogged(@NotNull BlockState state) {
+        return state.hasProperty(BlockStateProperties.WATERLOGGED)
+                && state.getValue(BlockStateProperties.WATERLOGGED);
+    }
+
+    /**
      * 检查方块状态是否为液体源方块 / Check if a block state is a liquid source block.
      * <p>
      * 仅当方块是 {@link LiquidBlock}（水或岩浆）且流体等级为 0（源头）时返回 {@code true}。
@@ -657,8 +819,12 @@ public abstract class MixinLitematicaWorldUtils {
         BlockHitResult blockHit = (BlockHitResult) mc.hitResult;
         BlockPos pos = blockHit.getBlockPos();
 
-        // 检查目标位置的原理图方块是否为液体源 / Check if schematic has liquid source at target
+        // 检查目标位置的原理图方块是否为液体源或含水方块
+        // Check if schematic has liquid source or waterlogged block at target
         BlockState schematicState = schematicWorld.getBlockState(pos);
-        return isLiquidSource(schematicState);
+        if (isLiquidSource(schematicState)) {
+            return true;
+        }
+        return Configs.ALLOW_WATERLOGGED_PLACEMENT.getBooleanValue() && isWaterlogged(schematicState);
     }
 }

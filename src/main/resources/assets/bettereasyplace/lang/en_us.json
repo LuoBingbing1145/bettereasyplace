@@ -15,6 +15,8 @@
   "config.comment.blockblacklist": "Blocks listed here will not be blocked by Easy Place mode (one block ID per line, e.g. minecraft:chest).",
   "config.name.allowinteraction": "Allow Block Interaction",
   "config.comment.allowinteraction": "If enabled, right-clicking to interact with blocks will not be blocked by Easy Place (§c⚠ May cause accidental block state updates during building!)",
+  "config.name.allowliquidplacement": "Allow Liquid Placement",
+  "config.comment.allowliquidplacement": "If enabled, liquid source blocks in the schematic will be handled by Easy Place (auto-pick bucket, precise placement). Empty buckets will not be allowed to pick up schematic liquids (waterlogged placement not yet supported).",
   "modmenu.nameTranslation.bettereasyplace": "Better Easy Place",
   "modmenu.descriptionTranslation.bettereasyplace": "A mod that improves the easy place functionality of Litematica"
 }

@@ -93,7 +93,7 @@ public class Configs implements IConfigHandler {
      * <b>⚠ Warning:</b> When enabled, right-clicking any block in Easy Place mode
      * will trigger vanilla interactions (opening chests, toggling levers,
      * clicking note blocks, etc.).  This may accidentally cause block state
-     * updates during building (e.g. activating redstone, opening doors) which
+     * changes during building (e.g. activating redstone, opening doors) which
      * could alter surrounding blocks. Use with caution.
      */
     public static final ConfigBooleanHotkeyed ALLOW_INTERACTION = new ConfigBooleanHotkeyed(
@@ -102,11 +102,33 @@ public class Configs implements IConfigHandler {
             "",
             "If enabled, right-clicking to interact with blocks will not be blocked by Easy Place (§c⚠ May cause accidental block state updates during building!)");
 
+    /**
+     * 允许液体放置 / Allow Liquid Placement.
+     * <p>
+     * 启用后，轻松放置模式下原理图中的液体源方块（水源、岩浆源）将被正确处理：
+     * 自动切换到对应的桶并精确放置液体。放置后空桶不会被允许回收液体，
+     * 保护原理图中的液体不被意外移除。
+     * <b>暂不支持含水方块放置。</b>
+     * <p>
+     * When enabled, liquid source blocks (water source, lava source) in the
+     * schematic will be properly handled by Easy Place mode: the correct bucket
+     * will be auto-picked and the liquid placed precisely. After placement,
+     * the empty bucket will not be allowed to pick up the liquid, protecting
+     * schematic liquids from accidental removal.
+     * <b>Waterlogged block placement is not yet supported.</b>
+     */
+    public static final ConfigBooleanHotkeyed ALLOW_LIQUID_PLACEMENT = new ConfigBooleanHotkeyed(
+            "allowLiquidPlacement",
+            false,
+            "",
+            "If enabled, liquid source blocks in the schematic will be handled by Easy Place (auto-pick bucket, precise placement, prevent accidental removal)");
+
     /** 所有通用配置项的不可变列表，用于批量读写 / Immutable list of all generic options for batch read/write. */
     public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
             ALLOW_EATING,
             ALLOW_FIREWORK,
             ALLOW_INTERACTION,
+            ALLOW_LIQUID_PLACEMENT,
             ENABLE_BLOCK_BLACKLIST,
             BLOCK_BLACKLIST
     );

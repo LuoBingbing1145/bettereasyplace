@@ -97,7 +97,6 @@ public class Configs implements IConfigHandler {
      * will be auto-picked and the liquid placed precisely. After placement,
      * the empty bucket will not be allowed to pick up the liquid, protecting
      * schematic liquids from accidental removal.
-     * <b>Waterlogged block placement is not yet supported.</b>
      */
     public static final ConfigBooleanHotkeyed ALLOW_LIQUID_PLACEMENT = new ConfigBooleanHotkeyed(
             "allowLiquidPlacement",
@@ -105,11 +104,34 @@ public class Configs implements IConfigHandler {
             "",
             "If enabled, liquid source blocks in the schematic will be handled by Easy Place (auto-pick bucket, precise placement, prevent accidental removal)");
 
+    /**
+     * 允许含水方块放置 / Allow Waterlogged Block Placement.
+     * <p>
+     * 启用后，轻松放置模式下原理图中的含水方块（如含水台阶、含水楼梯等）将被正确处理：
+     * 自动先放水源再放方块（方块放入水中自动含水），或者对已放置的方块用水桶右键含水。
+     * 需要背包中同时有对应方块和水桶。放置后空桶不会被允许回收液体。
+     * <b>需要同时启用"允许液体放置"。</b>
+     * <p>
+     * When enabled, waterlogged blocks in the schematic (e.g. waterlogged slabs,
+     * stairs, etc.) will be properly handled by Easy Place mode: water is placed
+     * first, then the block is placed in water (becoming waterlogged), or an
+     * existing block is waterlogged with a bucket. Requires both the block and a
+     * water bucket in the inventory. Empty buckets are prevented from picking up
+     * the placed water.
+     * <b>Requires "Allow Liquid Placement" to also be enabled.</b>
+     */
+    public static final ConfigBooleanHotkeyed ALLOW_WATERLOGGED_PLACEMENT = new ConfigBooleanHotkeyed(
+            "allowWaterloggedPlacement",
+            false,
+            "",
+            "If enabled, waterlogged blocks in the schematic will be handled by Easy Place (place water first, then block; requires water bucket + block in inventory)");
+
     /** 所有通用配置项的不可变列表，用于批量读写 / Immutable list of all generic options for batch read/write. */
     public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
             ALLOW_EATING,
             ALLOW_FIREWORK,
             ALLOW_LIQUID_PLACEMENT,
+            ALLOW_WATERLOGGED_PLACEMENT,
             ENABLE_BLOCK_BLACKLIST,
             BLOCK_BLACKLIST
     );

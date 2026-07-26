@@ -1,8 +1,10 @@
 package me.lbb.bettereasyplace.event;
 
+import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.hotkeys.*;
 import me.lbb.bettereasyplace.Reference;
+import me.lbb.bettereasyplace.config.Configs;
 import me.lbb.bettereasyplace.config.Hotkeys;
 import me.lbb.bettereasyplace.gui.GuiConfigs;
 import net.minecraft.client.Minecraft;
@@ -52,8 +54,17 @@ public class InputHandler implements IKeybindProvider, IKeyboardInputHandler, IM
      */
     @Override
     public void addKeysToMap(IKeybindManager manager) {
+        // 注册 HOTKEY_LIST 中的快捷键 / Register hotkeys from HOTKEY_LIST
         for (IHotkey hotkey : Hotkeys.HOTKEY_LIST) {
             manager.addKeybindToMap(hotkey.getKeybind());
+        }
+
+        // 注册 ConfigBooleanHotkeyed 的快捷键（不显示在快捷键标签页）
+        // Register keybinds from ConfigBooleanHotkeyed (not shown on Hotkeys tab)
+        for (IConfigBase config : Configs.OPTIONS) {
+            if (config instanceof IHotkey hotkey) {
+                manager.addKeybindToMap(hotkey.getKeybind());
+            }
         }
 
         // 打开配置界面回调 / Config GUI open callback

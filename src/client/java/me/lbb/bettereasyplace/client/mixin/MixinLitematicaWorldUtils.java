@@ -1,17 +1,24 @@
 package me.lbb.bettereasyplace.client.mixin;
 
+import fi.dy.masa.litematica.materials.MaterialCache;
+import fi.dy.masa.litematica.util.InventoryUtils;
+import fi.dy.masa.litematica.util.RayTraceUtils;
 import fi.dy.masa.litematica.util.WorldUtils;
+import fi.dy.masa.litematica.world.SchematicWorldHandler;
+import fi.dy.masa.litematica.world.WorldSchematic;
 import me.lbb.bettereasyplace.config.Configs;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.FireworkRocketItem;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -114,7 +121,138 @@ public abstract class MixinLitematicaWorldUtils {
     private static void bettereasyplace$handlePlacementRestriction(Minecraft mc, CallbackInfoReturnable<Boolean> cir) {
         if (shouldSkipEasyPlace(mc)) {
             cir.setReturnValue(false);
+            return;
         }
+
+        // 液体放置支持：禁止空桶回收原理图中的液体
+        // Liquid placement support: prevent empty bucket from picking up schematic liquids
+        if (shouldRestrictLiquidPickup(mc)) {
+            cir.setReturnValue(true);
+        }
+    }
+
+    /**
+     * 注入轻松放置核心动作 / Inject into the core easy place action.
+     * <p>
+     * 在 {@code doEasyPlaceAction} 执行前检查原理图目标位置是否为液体源方块。
+     * 如果是，则用含流体的射线追踪定位液体，自动切换对应桶并精确放置。
+     * 放置完成后空桶不会被允许回收液体，保护原理图中的液体不被意外移除。
+     * <p>
+     * Check before {@code doEasyPlaceAction} whether the schematic target is a
+     * liquid source block.  If so, trace with fluid targeting, auto-pick the
+     * correct bucket, and place the liquid precisely.  After placement the empty
+     * bucket is prevented from picking up the liquid, protecting schematic
+     * liquids from accidental removal.
+     */
+    @Inject(method = "doEasyPlaceAction", at = @At("HEAD"), cancellable = true)
+    private static void bettereasyplace$doEasyPlaceAction(Minecraft mc, CallbackInfoReturnable<InteractionResult> cir) {
+        if (!Configs.ALLOW_LIQUID_PLACEMENT.getBooleanValue()) {
+            return;
+        }
+
+        LocalPlayer player = mc.player;
+        if (player == null) {
+            return;
+        }
+
+        WorldSchematic schematicWorld = SchematicWorldHandler.getSchematicWorld();
+        if (schematicWorld == null) {
+            return;
+        }
+
+        // 射线追踪时包含流体，使原理图中的液体可见
+        // Trace with fluid targeting so liquids in the schematic are visible
+        // respectRenderRange = false: placement must work even when rendering is off
+        double range = 6.0;
+        BlockHitResult liquidTrace = RayTraceUtils.traceToSchematicWorld(player, range, false, true);
+        if (liquidTrace == null || liquidTrace.getType() != HitResult.Type.BLOCK) {
+            return;
+        }
+
+        BlockPos pos = liquidTrace.getBlockPos();
+        BlockState stateSchematic = schematicWorld.getBlockState(pos);
+
+        // 仅处理液体源方块 / Only handle liquid source blocks
+        if (!isLiquidSource(stateSchematic)) {
+            return;
+        }
+
+        // 检查是否已在正确位置放置了相同液体 / Check if the same liquid is already placed
+        if (mc.level == null) {
+            return;
+        }
+        BlockState stateClient = mc.level.getBlockState(pos);
+        if (stateSchematic.getBlock() == stateClient.getBlock() && isLiquidSource(stateClient)) {
+            cir.setReturnValue(InteractionResult.FAIL);
+            return;
+        }
+
+        // 检查位置缓存（防止短时间内重复放置）/ Check position cache
+        if (WorldUtils.easyPlaceIsPositionCached(pos)) {
+            cir.setReturnValue(InteractionResult.FAIL);
+            return;
+        }
+
+        // 获取放置液体所需的物品（水桶/岩浆桶）/ Get required build item (bucket)
+        ItemStack requiredStack = MaterialCache.getInstance().getRequiredBuildItemForState(stateSchematic);
+        if (requiredStack.isEmpty()) {
+            cir.setReturnValue(InteractionResult.FAIL);
+            return;
+        }
+
+        // 自动切换到对应的桶（先切换，后验证）/ Auto-pick the bucket first, then verify
+        InventoryUtils.schematicWorldPickBlock(requiredStack, pos, schematicWorld, mc);
+
+        // 检查切换后玩家手中是否持有对应的桶 / Verify the player now holds the matching bucket
+        InteractionHand hand = fi.dy.masa.litematica.util.EntityUtils.getUsedHandForItem(player, requiredStack);
+        if (hand == null) {
+            cir.setReturnValue(InteractionResult.FAIL);
+            return;
+        }
+
+        // ================================================================
+        // 液体放置：不依赖 BucketItem.use() 的自动射线追踪，
+        // 而是直接在原理图坐标处放置液体。
+        // BucketItem.use() 会做 getPlayerPOVHitResult() 独立射线追踪，
+        // 导致准星穿过液体位置后液体被放到远处方块的表面而非原理图坐标。
+        //
+        // Liquid placement: do NOT rely on BucketItem.use()'s autonomous
+        // ray tracing via getPlayerPOVHitResult(), which would place the
+        // liquid at the surface of a distant block if the crosshair passes
+        // through the liquid position and hits a block behind it.
+        // Instead, place the liquid directly at the schematic position.
+        // ================================================================
+
+        // 拿到实际的桶物品 / Get the actual bucket item in the player's hand
+        ItemStack heldStack = player.getItemInHand(hand);
+        if (!(heldStack.getItem() instanceof BucketItem bucketItem)) {
+            cir.setReturnValue(InteractionResult.FAIL);
+            return;
+        }
+
+        // 1) 先在客户端直接在原理图坐标放置液体（桶还在手中，未被消耗）
+        //    First place the liquid directly at the schematic position on the client
+        //    (the bucket is still in hand, not yet consumed)
+        //    emptyContents 接收 BlockPos 直接放置，不做射线追踪
+        //    emptyContents takes a BlockPos and places directly, no ray tracing
+        bucketItem.emptyContents(player, mc.level, pos, null);
+
+        // 2) 再调用 useItem 发包给服务端并触发客户端物品交换（桶→空桶）
+        //    Then call useItem to send the packet to the server and trigger the
+        //    client-side item swap (bucket → empty bucket)
+        //    useItem 内部的 BucketItem.use() 会在服务端做射线追踪放置，
+        //    并在客户端交换手上物品。在大多数情况下服务端放置位置与原理图一致。
+        //    useItem internally calls BucketItem.use() which does ray-trace-based
+        //    placement on the server and swaps the hand item on the client.
+        //    In most cases the server placement matches the schematic position.
+        if (mc.gameMode != null) {
+            mc.gameMode.useItem(player, hand);
+        }
+
+        // 更新放置计时，防止下一tick立即再次处理 / Update placement timer
+        WorldUtils.setEasyPlaceLastPickBlockTime();
+
+        cir.setReturnValue(InteractionResult.SUCCESS);
     }
 
     /**
@@ -396,5 +534,88 @@ public abstract class MixinLitematicaWorldUtils {
         }
 
         return false;
+    }
+
+    /**
+     * 检查方块状态是否为液体源方块 / Check if a block state is a liquid source block.
+     * <p>
+     * 仅当方块是 {@link LiquidBlock}（水或岩浆）且流体等级为 0（源头）时返回 {@code true}。
+     * 流动水/流动岩浆返回 {@code false}。
+     * <p>
+     * Returns {@code true} only when the block is a {@link LiquidBlock} (water or lava)
+     * and the fluid level is 0 (source).  Flowing water/lava returns {@code false}.
+     *
+     * @param state 待检查的方块状态 / the block state to check
+     * @return true 如果是液体源方块 / true if it is a liquid source block
+     */
+    @Unique
+    private static boolean isLiquidSource(@NotNull BlockState state) {
+        Block block = state.getBlock();
+        if (!(block instanceof LiquidBlock)) {
+            return false;
+        }
+        // LiquidBlock.LEVEL == 0 表示源头 / LEVEL == 0 means source
+        return state.getValue(LiquidBlock.LEVEL) == 0;
+    }
+
+    /**
+     * 检查是否应禁止玩家用空桶回收原理图中的液体 /
+     * Check if the player should be prevented from picking up a schematic liquid
+     * with an empty bucket.
+     * <p>
+     * 同时满足以下条件时返回 {@code true}（即限制该操作）：
+     * <ol>
+     *   <li>配置项 {@code ALLOW_LIQUID_PLACEMENT} 已启用</li>
+     *   <li>玩家主手或副手持有空桶</li>
+     *   <li>玩家视线指向原理图中存在液体源方块的位置</li>
+     * </ol>
+     * 这可以保护原理图中的液体源不被意外回收。
+     * <p>
+     * Returns {@code true} (restrict the action) when ALL of the following hold:
+     * <ol>
+     *   <li>{@code ALLOW_LIQUID_PLACEMENT} config is enabled</li>
+     *   <li>The player holds an empty bucket in main or off hand</li>
+     *   <li>The player is looking at a position where the schematic has a liquid source</li>
+     * </ol>
+     * This protects schematic liquid sources from accidental removal.
+     *
+     * @param mc Minecraft 客户端实例 / the Minecraft client instance
+     * @return true 如果应禁止空桶回收液体 / true if empty bucket pickup should be restricted
+     */
+    @Unique
+    private static boolean shouldRestrictLiquidPickup(@NotNull Minecraft mc) {
+        if (!Configs.ALLOW_LIQUID_PLACEMENT.getBooleanValue()) {
+            return false;
+        }
+
+        LocalPlayer player = mc.player;
+        if (player == null) {
+            return false;
+        }
+
+        // 检查是否持有空桶 / Check if holding empty bucket
+        ItemStack mainHand = player.getMainHandItem();
+        ItemStack offHand = player.getOffhandItem();
+        if (!mainHand.is(Items.BUCKET) && !offHand.is(Items.BUCKET)) {
+            return false;
+        }
+
+        // 需要原理图世界 / Need schematic world
+        WorldSchematic schematicWorld = SchematicWorldHandler.getSchematicWorld();
+        if (schematicWorld == null) {
+            return false;
+        }
+
+        // 检查视线目标 / Check look target
+        if (mc.hitResult == null || mc.hitResult.getType() != HitResult.Type.BLOCK) {
+            return false;
+        }
+
+        BlockHitResult blockHit = (BlockHitResult) mc.hitResult;
+        BlockPos pos = blockHit.getBlockPos();
+
+        // 检查目标位置的原理图方块是否为液体源 / Check if schematic has liquid source at target
+        BlockState schematicState = schematicWorld.getBlockState(pos);
+        return isLiquidSource(schematicState);
     }
 }

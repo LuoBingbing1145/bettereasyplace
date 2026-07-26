@@ -69,7 +69,8 @@ public class Configs implements IConfigHandler {
             "enableBlockBlacklist",
             false,
             "",
-            "If enabled, blocks in the blacklist will not be blocked by Easy Place");
+            "If enabled, blocks in the blacklist will not be blocked by Easy Place")
+            .apply("bettereasyplace.config");
 
     /**
      * 方块黑名单 / Block Blacklist.
@@ -84,7 +85,8 @@ public class Configs implements IConfigHandler {
     public static final ConfigStringList BLOCK_BLACKLIST = new ConfigStringList(
             "blockBlacklist",
             ImmutableList.of(),
-            "List of block IDs that will not be blocked by Easy Place mode");
+            "List of block IDs that will not be blocked by Easy Place mode")
+            .apply("bettereasyplace.config");
 
     /** 所有通用配置项的不可变列表，用于批量读写 / Immutable list of all generic options for batch read/write. */
     public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(

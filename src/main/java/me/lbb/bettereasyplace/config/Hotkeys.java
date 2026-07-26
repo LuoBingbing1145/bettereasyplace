@@ -40,11 +40,7 @@ public class Hotkeys implements IKeybindProvider {
      * and {@code HOTKEY_LIST} (keybind registration).
      */
     public static final List<IHotkey> HOTKEY_LIST = ImmutableList.of(
-            OPEN_CONFIG_GUI,
-            Configs.ALLOW_EATING,
-            Configs.ALLOW_FIREWORK,
-            Configs.ALLOW_INTERACTION,
-            Configs.ENABLE_BLOCK_BLACKLIST
+            OPEN_CONFIG_GUI
     );
 
     /**

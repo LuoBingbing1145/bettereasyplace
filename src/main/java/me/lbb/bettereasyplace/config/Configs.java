@@ -83,24 +83,6 @@ public class Configs implements IConfigHandler {
             ImmutableList.of(),
             "List of block IDs that will not be blocked by Easy Place mode");
 
-    /**
-     * 允许与方块互动 / Allow Block Interaction.
-     * <p>
-     * <b>⚠ 警告 / Warning:</b> 启用后，轻松放置时右键任意方块都会触发原版交互
-     * （如打开箱子、操作拉杆、点击音符盒等），这可能在建造过程中意外触发方块的
-     * 状态更新（如激活红石、打开门等），导致周围方块发生变化。请谨慎使用。
-     * <p>
-     * <b>⚠ Warning:</b> When enabled, right-clicking any block in Easy Place mode
-     * will trigger vanilla interactions (opening chests, toggling levers,
-     * clicking note blocks, etc.).  This may accidentally cause block state
-     * changes during building (e.g. activating redstone, opening doors) which
-     * could alter surrounding blocks. Use with caution.
-     */
-    public static final ConfigBooleanHotkeyed ALLOW_INTERACTION = new ConfigBooleanHotkeyed(
-            "allowInteraction",
-            false,
-            "",
-            "If enabled, right-clicking to interact with blocks will not be blocked by Easy Place (§c⚠ May cause accidental block state updates during building!)");
 
     /**
      * 允许液体放置 / Allow Liquid Placement.
@@ -127,7 +109,6 @@ public class Configs implements IConfigHandler {
     public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
             ALLOW_EATING,
             ALLOW_FIREWORK,
-            ALLOW_INTERACTION,
             ALLOW_LIQUID_PLACEMENT,
             ENABLE_BLOCK_BLACKLIST,
             BLOCK_BLACKLIST

@@ -15,6 +15,8 @@
   "bettereasyplace.config.comment.blockBlacklist": "Blocks listed here will not be blocked by Easy Place mode (one block ID per line, e.g. minecraft:chest).",
   "bettereasyplace.config.name.allowShulkerBox": "Allow Shulker Box",
   "bettereasyplace.config.comment.allowShulkerBox": "If enabled, you can open placed shulker boxes while holding blocks, and place shulker boxes without Easy Place interception.",
+  "bettereasyplace.config.name.allowLiquidPlacement": "Allow Liquid Placement",
+  "bettereasyplace.config.comment.allowLiquidPlacement": "If enabled, liquid source blocks in the schematic will be handled by Easy Place (auto-pick bucket, precise placement). Empty buckets will not be allowed to pick up schematic liquids (waterlogged placement not yet supported).",
   "modmenu.nameTranslation.bettereasyplace": "Better Easy Place",
   "modmenu.descriptionTranslation.bettereasyplace": "A mod that improves the easy place functionality of Litematica"
 }

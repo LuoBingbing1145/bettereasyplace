@@ -4,19 +4,10 @@ import fi.dy.masa.litematica.util.WorldUtils;
 import me.lbb.bettereasyplace.config.Configs;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.FireworkRocketItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -45,8 +36,6 @@ import java.util.List;
  * <ul>
  *   <li><b>进食 / Eating</b> — 手持食物右键进食不被拦截（{@link Configs#ALLOW_EATING}）</li>
  *   <li><b>烟花火箭 / Firework Rockets</b> — 鞘翅飞行时不拦截烟花加速（{@link Configs#ALLOW_FIREWORK}）</li>
- *   <li><b>方块互动 / Block Interaction</b> — 不拦截与方块的右键交互：开箱、拉杆、
- *       按钮、音符盒、门、活板门、栅栏门、钟、告示牌等（{@link Configs#ALLOW_INTERACTION}）</li>
  *   <li><b>黑名单 / Blacklist</b> — 黑名单中的方块不拦截放置（{@link Configs#ENABLE_BLOCK_BLACKLIST}）</li>
  * </ul>
  * <p>
@@ -67,16 +56,12 @@ import java.util.List;
  * <ul>
  *   <li><b>Eating</b> — food right-click not blocked ({@link Configs#ALLOW_EATING})</li>
  *   <li><b>Firework Rockets</b> — elytra boosting not blocked ({@link Configs#ALLOW_FIREWORK})</li>
- *   <li><b>Block Interaction</b> — interactable block right-clicks not blocked:
- *       chests, levers, buttons, note blocks, doors, trapdoors, fence gates,
- *       bells, signs, etc. ({@link Configs#ALLOW_INTERACTION})</li>
  *   <li><b>Blacklist</b> — blacklisted block placement not blocked
  *       ({@link Configs#ENABLE_BLOCK_BLACKLIST})</li>
  * </ul>
  *
  * @see Configs#ALLOW_EATING
  * @see Configs#ALLOW_FIREWORK
- * @see Configs#ALLOW_INTERACTION
  */
 @Mixin(value = WorldUtils.class, remap = false)
 public abstract class MixinLitematicaWorldUtils {
@@ -128,9 +113,9 @@ public abstract class MixinLitematicaWorldUtils {
     /**
      * 判断是否应跳过轻松放置拦截 / Determine whether Easy Place interception should be skipped.
      * <p>
-     * 当玩家当前正在执行被允许的 bypass 操作（进食或烟花）时返回 {@code true}。
+     * 当玩家当前正在执行被允许的 bypass 操作（进食、烟花或黑名单方块）时返回 {@code true}。
      * Returns {@code true} when the player is currently performing an allowed
-     * bypass action (eating or using fireworks).
+     * bypass action (eating, fireworks, or blacklisted blocks).
      *
      * @param mc Minecraft 客户端实例 / the Minecraft client instance
      * @return true 如果应跳过轻松放置 / true if easy place should be skipped
@@ -147,10 +132,6 @@ public abstract class MixinLitematicaWorldUtils {
         }
 
         if (shouldAllowFirework(player)) {
-            return true;
-        }
-
-        if (shouldAllowInteraction(mc)) {
             return true;
         }
 
@@ -223,106 +204,6 @@ public abstract class MixinLitematicaWorldUtils {
 
         return mainHand.getItem() instanceof FireworkRocketItem
                 || offHand.getItem() instanceof FireworkRocketItem;
-    }
-
-    /**
-     * 检查是否应允许与方块互动 / Check if block interaction should be allowed.
-     * <p>
-     * 同时满足以下条件时返回 {@code true}：
-     * <ol>
-     *   <li>配置项 {@code ALLOW_INTERACTION} 已启用</li>
-     *   <li>玩家准星对准了某个方块（非空气）</li>
-     *   <li>该方块可交互（有方块实体 或 属于已知可交互方块类型）</li>
-     * </ol>
-     * <p>
-     * 此功能允许在轻松放置模式下与几乎所有方块进行原版交互，包括但不限于：
-     * 打开箱子/漏斗等容器、拉动拉杆、按下按钮、点击音符盒、开关门/活板门/栅栏门、
-     * 敲钟、使用工作台/切石机等合成站。
-     * <p>
-     * <b>⚠ 注意：</b>启用后可能导致建造时意外触发方块状态更新，对周围方块造成破坏性影响。
-     * <p>
-     * Returns {@code true} when ALL of the following conditions are met:
-     * <ol>
-     *   <li>{@code ALLOW_INTERACTION} config is enabled</li>
-     *   <li>The player's crosshair is targeting a block (not air)</li>
-     *   <li>That block is interactable (has a block entity or is a known interactable type)</li>
-     * </ol>
-     * This allows vanilla interaction with virtually all blocks during Easy Place mode,
-     * including but not limited to: opening containers (chests/hoppers), toggling levers,
-     * pressing buttons, clicking note blocks, opening doors/trapdoors/fence gates,
-     * ringing bells, and using crafting stations (crafting table/stonecutter).
-     * <p>
-     * <b>⚠ Note:</b> May accidentally trigger block state updates during building,
-     * potentially causing destructive changes to surrounding blocks.
-     */
-    @Unique
-    private static boolean shouldAllowInteraction(@NotNull Minecraft mc) {
-        if (!Configs.ALLOW_INTERACTION.getBooleanValue()) {
-            return false;
-        }
-
-        // 准星未命中方块则不拦截 / Don't intercept if crosshair isn't on a block
-        if (mc.hitResult == null || mc.hitResult.getType() != HitResult.Type.BLOCK) {
-            return false;
-        }
-
-        Level level = mc.level;
-        if (level == null) {
-            return false;
-        }
-
-        BlockHitResult blockHit = (BlockHitResult) mc.hitResult;
-        BlockPos pos = blockHit.getBlockPos();
-        BlockState state = level.getBlockState(pos);
-
-        // 目标为空气则放行 / Target is air — let through
-        if (state.isAir()) {
-            return false;
-        }
-
-        // 有方块实体的方块（箱子、漏斗、熔炉、附魔台、铁砧等）均可交互
-        // Blocks with block entities (chests, hoppers, furnaces, enchantment tables, anvils, etc.)
-        if (state.hasBlockEntity()) {
-            return true;
-        }
-
-        // 通过反射检测方块是否覆写了 BlockBehaviour.use()（1.20.1 中已标记 @Deprecated）
-        // 原版与模组方块均适用——只要覆写了 use() 即为可交互，反射不执行实际代码
-        // Detect via reflection whether the block overrides BlockBehaviour.use()
-        // (already @Deprecated in 1.20.1). Works for both vanilla & modded blocks —
-        // any override means interactable. No actual code invoked.
-        return hasOverriddenUse(state.getBlock());
-    }
-
-    /**
-     * 通过反射检测方块是否覆写了 {@code BlockBehaviour.use()} /
-     * Check via reflection whether the block class overrides {@code BlockBehaviour.use()}.
-     * <p>
-     * {@code BlockBehaviour.use(BlockState, Level, BlockPos, Player, Hand, BlockHitResult)}
-     * 在 Minecraft 1.20.1 中已被 {@code @Deprecated}（为 1.21 中拆分为
-     * {@code useItemOn} / {@code useWithoutItem} 做准备，但 1.20.1 中不存在替代方法）。
-     * 基类默认返回 {@code InteractionResult.PASS}；任何覆写均意味着方块有右键交互。
-     * <p>
-     * In Minecraft 1.20.1, {@code BlockBehaviour.use} is {@code @Deprecated}
-     * (forward-looking for the 1.21 split; no replacement exists in 1.20.1).
-     * The base implementation returns {@code InteractionResult.PASS};
-     * any override signals right-click interactability.
-     *
-     * @param block 待检测的方块 / the block to check
-     * @return {@code true} 如果方块覆写了 use 方法 / if the block overrides the use method
-     */
-    @Unique
-    private static boolean hasOverriddenUse(@NotNull Block block) {
-        try {
-            java.lang.reflect.Method m = block.getClass()
-                    .getMethod("use", BlockState.class, Level.class, BlockPos.class,
-                            Player.class, InteractionHand.class, BlockHitResult.class);
-            // use() 声明在 BlockBehaviour 中，比较声明类是否为 BlockBehaviour 基类
-            // use() is declared in BlockBehaviour; check if it was overridden by a subclass
-            return m.getDeclaringClass() != BlockBehaviour.class;
-        } catch (NoSuchMethodException e) {
-            return false;
-        }
     }
 
     /**

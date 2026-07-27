@@ -16,9 +16,9 @@
   "config.name.blockblacklist": "Blocking Blacklist",
   "config.comment.blockblacklist": "Blocks listed here will not be blocked by Easy Place mode (one block ID per line, e.g. minecraft:chest).",
   "config.name.allowliquidplacement": "Allow Liquid Placement",
-  "config.comment.allowliquidplacement": "If enabled, liquid source blocks in the schematic will be handled by Easy Place (auto-pick bucket, precise placement). Empty buckets will not be allowed to pick up schematic liquids.",
+  "config.comment.allowliquidplacement": "[Experimental] If enabled, liquid source blocks in the schematic will be handled by Easy Place (auto-pick bucket, precise placement). Empty buckets will not be allowed to pick up schematic liquids.",
   "config.name.allowwaterloggedplacement": "Allow Waterlogged Placement",
-  "config.comment.allowwaterloggedplacement": "If enabled, waterlogged blocks in the schematic will be handled by Easy Place (place water first, then block; or waterlog existing blocks). Requires both the block and a water bucket in inventory. Requires \"Allow Liquid Placement\" to also be enabled.",
+  "config.comment.allowwaterloggedplacement": "[Experimental] If enabled, waterlogged blocks in the schematic will be handled by Easy Place (place water first, then block; or waterlog existing blocks). Requires both the block and a water bucket in inventory. Requires \"Allow Liquid Placement\" to also be enabled.",
   "modmenu.nameTranslation.bettereasyplace": "Better Easy Place",
   "modmenu.descriptionTranslation.bettereasyplace": "A mod that improves the easy place functionality of Litematica"
 }

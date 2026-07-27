@@ -127,7 +127,7 @@ public class Configs implements IConfigHandler {
             "allowLiquidPlacement",
             false,
             "",
-            "If enabled, liquid source blocks in the schematic will be handled by Easy Place (auto-pick bucket, precise placement, prevent accidental removal)")
+            "[Experimental] If enabled, liquid source blocks in the schematic will be handled by Easy Place (auto-pick bucket, precise placement, prevent accidental removal)")
             .apply("bettereasyplace.config");
 
     /**
@@ -150,7 +150,8 @@ public class Configs implements IConfigHandler {
             "allowWaterloggedPlacement",
             false,
             "",
-            "If enabled, waterlogged blocks in the schematic will be handled by Easy Place (place water first, then block; requires water bucket + block in inventory)");
+            "[Experimental] If enabled, waterlogged blocks in the schematic will be handled by Easy Place (place water first, then block; or waterlog existing blocks). Requires both block and water bucket in inventory. Requires \"Allow Liquid Placement\" to also be enabled.")
+            .apply("bettereasyplace.config");
 
     /** 所有通用配置项的不可变列表，用于批量读写 / Immutable list of all generic options for batch read/write. */
     public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(

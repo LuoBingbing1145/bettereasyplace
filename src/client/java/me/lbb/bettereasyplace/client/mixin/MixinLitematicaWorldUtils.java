@@ -163,9 +163,11 @@ public abstract class MixinLitematicaWorldUtils {
 
         // 射线追踪时包含流体，使原理图中的液体可见
         // Trace with fluid targeting so liquids in the schematic are visible
-        // respectRenderRange = false: placement must work even when rendering is off
-        double range = 6.0;
-        BlockHitResult liquidTrace = RayTraceUtils.traceToSchematicWorld(player, range, false, true);
+        // respectRenderRange = true: 尊重渲染层范围，单层模式下不会误放置其他层的水
+        // respectRenderRange = true: respect render layer range to avoid placing
+        // water in non-rendered layers when using single-layer mode
+        double range = fi.dy.masa.litematica.config.Configs.Generic.EASY_PLACE_VANILLA_REACH.getBooleanValue() ? 4.5 : 6.0;
+        BlockHitResult liquidTrace = RayTraceUtils.traceToSchematicWorld(player, range, true, true);
         if (liquidTrace == null || liquidTrace.getType() != HitResult.Type.BLOCK) {
             return;
         }

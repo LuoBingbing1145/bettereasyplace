@@ -14,9 +14,9 @@
   "config.name.blockblacklist": "方块黑名单",
   "config.comment.blockblacklist": "黑名单中的方块在轻松放置模式下不会被拦截（每行一个方块 ID，如 minecraft:chest）。",
   "config.name.allowliquidplacement": "允许液体放置",
-  "config.comment.allowliquidplacement": "启用后，轻松放置模式下自动切换至水桶/岩浆桶并精确放置原理图中的液体源方块。放置后空桶不会被允许回收液体。",
+  "config.comment.allowliquidplacement": "[实验性功能] 启用后，轻松放置模式下自动切换至水桶/岩浆桶并精确放置原理图中的液体源方块。放置后空桶不会被允许回收液体。",
   "config.name.allowwaterloggedplacement": "允许含水方块放置",
-  "config.comment.allowwaterloggedplacement": "启用后，轻松放置模式下自动处理原理图中的含水方块：先放水源再放方块（方块放入水中自动含水），或对已放置方块用水桶含水。需要背包中同时有对应方块和水桶。需要同时启用\"允许液体放置\"。",
+  "config.comment.allowwaterloggedplacement": "[实验性功能] 启用后，轻松放置模式下自动处理原理图中的含水方块：先放水源再放方块（方块放入水中自动含水），或对已放置方块用水桶含水。需要背包中同时有对应方块和水桶。需要同时启用\"允许液体放置\"。",
   "modmenu.nameTranslation.bettereasyplace": "更好的轻松放置",
   "modmenu.descriptionTranslation.bettereasyplace": "一个改进 Litematica 的轻松放置功能的模组"
 }

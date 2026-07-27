@@ -10,6 +10,7 @@ import me.lbb.bettereasyplace.config.Configs;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.InteractionHand;
@@ -20,6 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -80,6 +82,43 @@ import java.util.List;
  */
 @Mixin(value = WorldUtils.class, remap = false)
 public abstract class MixinLitematicaWorldUtils {
+
+    /**
+     * 通过反射调用 WorldUtils 的私有方法 applyPlacementFacing /
+     * Call WorldUtils' private method applyPlacementFacing via reflection.
+     * <p>
+     * 该方法是 litematica 用于根据原理图方块状态修正放置方向的逻辑。
+     * 例：原理图上半砖 → 修正 Direction 为 DOWN，使 SlabBlock.getStateForPlacement 返回 TOP。
+     * This method contains litematica's logic for correcting placement direction
+     * based on the schematic block state (e.g. top-slab → forces Direction.DOWN).
+     */
+    @Unique
+    private static Direction invokeApplyPlacementFacing(BlockState schematicState, Direction originalDir, BlockState clientState) {
+        try {
+            java.lang.reflect.Method method = WorldUtils.class.getDeclaredMethod(
+                    "applyPlacementFacing", BlockState.class, Direction.class, BlockState.class);
+            method.setAccessible(true);
+            return (Direction) method.invoke(null, schematicState, originalDir, clientState);
+        } catch (Exception e) {
+            return originalDir;
+        }
+    }
+
+    /**
+     * 通过反射调用 WorldUtils 的私有方法 applyBlockSlabProtocol /
+     * Call WorldUtils' private method applyBlockSlabProtocol via reflection.
+     */
+    @Unique
+    private static Vec3 invokeApplyBlockSlabProtocol(BlockPos pos, BlockState state, Vec3 hitPos) {
+        try {
+            java.lang.reflect.Method method = WorldUtils.class.getDeclaredMethod(
+                    "applyBlockSlabProtocol", BlockPos.class, BlockState.class, Vec3.class);
+            method.setAccessible(true);
+            return (Vec3) method.invoke(null, pos, state, hitPos);
+        } catch (Exception e) {
+            return hitPos;
+        }
+    }
 
     /**
      * 拦截每 tick 的轻松放置执行 / Intercept per-tick easy place execution.
@@ -189,7 +228,7 @@ public abstract class MixinLitematicaWorldUtils {
         // ================================================================
         if (Configs.ALLOW_WATERLOGGED_PLACEMENT.getBooleanValue() && isWaterlogged(stateSchematic)) {
             handleWaterloggedPlacement(mc, player, schematicWorld, pos,
-                    stateSchematic, stateClient, cir);
+                    stateSchematic, stateClient, cir, liquidTrace);
             return;
         }
 
@@ -228,16 +267,16 @@ public abstract class MixinLitematicaWorldUtils {
         }
 
         // ================================================================
-        // 液体放置：不依赖 BucketItem.use() 的自动射线追踪，
-        // 而是直接在原理图坐标处放置液体。
-        // BucketItem.use() 会做 getPlayerPOVHitResult() 独立射线追踪，
-        // 导致准星穿过液体位置后液体被放到远处方块的表面而非原理图坐标。
+        // 液体放置：BucketItem 没有重写 useOn，所以 useItemOn 对水桶无效。
+        // 使用 emptyContents(null) 在客户端精确放置 + useItem 发包到服务端。
+        // 注意：useItem 内部会做独立射线追踪，服务端放置位置可能与客户端
+        // 略有偏差，但水桶必须走此路径才能正确触发物品交换（桶→空桶）。
         //
-        // Liquid placement: do NOT rely on BucketItem.use()'s autonomous
-        // ray tracing via getPlayerPOVHitResult(), which would place the
-        // liquid at the surface of a distant block if the crosshair passes
-        // through the liquid position and hits a block behind it.
-        // Instead, place the liquid directly at the schematic position.
+        // Liquid placement: BucketItem does NOT override useOn, so useItemOn
+        // is a no-op for buckets. Use emptyContents(null) for precise client
+        // placement + useItem for server packet & item swap.
+        // Note: useItem does its own ray tracing internally, so the server
+        // position may differ slightly from the client position.
         // ================================================================
 
         // 拿到实际的桶物品 / Get the actual bucket item in the player's hand
@@ -247,21 +286,12 @@ public abstract class MixinLitematicaWorldUtils {
             return;
         }
 
-        // 1) 先在客户端直接在原理图坐标放置液体（桶还在手中，未被消耗）
-        //    First place the liquid directly at the schematic position on the client
-        //    (the bucket is still in hand, not yet consumed)
-        //    emptyContents 接收 BlockPos 直接放置，不做射线追踪
-        //    emptyContents takes a BlockPos and places directly, no ray tracing
+        // 客户端：直接在原理图坐标放置液体
+        // Client: place liquid directly at schematic position
         bucketItem.emptyContents(player, mc.level, pos, null);
 
-        // 2) 再调用 useItem 发包给服务端并触发客户端物品交换（桶→空桶）
-        //    Then call useItem to send the packet to the server and trigger the
-        //    client-side item swap (bucket → empty bucket)
-        //    useItem 内部的 BucketItem.use() 会在服务端做射线追踪放置，
-        //    并在客户端交换手上物品。在大多数情况下服务端放置位置与原理图一致。
-        //    useItem internally calls BucketItem.use() which does ray-trace-based
-        //    placement on the server and swaps the hand item on the client.
-        //    In most cases the server placement matches the schematic position.
+        // 服务端：发包并触发客户端物品交换（桶→空桶）
+        // Server: send packet and trigger client item swap (bucket → empty bucket)
         if (mc.gameMode != null) {
             mc.gameMode.useItem(player, hand);
         }
@@ -287,7 +317,8 @@ public abstract class MixinLitematicaWorldUtils {
     @Unique
     private static void handleWaterloggedPlacement(Minecraft mc, LocalPlayer player,
                                                    WorldSchematic schematicWorld, BlockPos pos, @NotNull BlockState stateSchematic,
-                                                   @NotNull BlockState stateClient, CallbackInfoReturnable<InteractionResult> cir) {
+                                                   @NotNull BlockState stateClient, CallbackInfoReturnable<InteractionResult> cir,
+                                                   BlockHitResult liquidTrace) {
 
         // 已经完全正确放置（含水方块已就位）/ Already correctly placed
         if (stateSchematic.getBlock() == stateClient.getBlock() && isWaterlogged(stateClient)) {
@@ -302,14 +333,75 @@ public abstract class MixinLitematicaWorldUtils {
             return;
         }
 
-        // 水已放置 → 让标准轻松放置流程处理方块放置
-        // Water is placed → let standard easy place handle block placement
-        if (isLiquidSource(stateClient)) {
-            return; // pass through to standard doEasyPlaceAction
+        // 任何液体（水源或流动水）→ 获取原理图要求的方块放置
+        // 不能回退到原始 doEasyPlaceAction，因为原始方法使用不含流体的
+        // 射线追踪，射线会穿过水打到水面后的方块上，导致放置位置错误。
+        // Any liquid (source or flowing) → place the required block.
+        // We cannot fall back to the original doEasyPlaceAction because it
+        // uses ray tracing WITHOUT fluids, so the ray passes through water
+        // and hits the block behind, causing incorrect placement position.
+        if (stateClient.getBlock() instanceof LiquidBlock) {
+            if (invokeEasyPlaceIsPositionCached(pos)) {
+                cir.setReturnValue(InteractionResult.FAIL);
+                return;
+            }
+
+            ItemStack requiredStack = MaterialCache.getInstance().getRequiredBuildItemForState(stateSchematic);
+            if (requiredStack.isEmpty()) {
+                cir.setReturnValue(InteractionResult.FAIL);
+                return;
+            }
+
+            // 切换到原理图要求的方块 / Switch to the required block
+            InventoryUtils.schematicWorldPickBlock(requiredStack, pos, schematicWorld, mc);
+
+            // 验证切换成功 / Verify the switch succeeded
+            InteractionHand hand = fi.dy.masa.litematica.util.EntityUtils.getUsedHandForItem(player, requiredStack);
+            if (hand == null) {
+                cir.setReturnValue(InteractionResult.FAIL);
+                return;
+            }
+
+            // 1) applyPlacementFacing 修正 Direction（HALF: TOP→DOWN, BOTTOM→UP）
+            //    传入 AIR 而非水，因为 applyPlacementFacing 预期客户端是空气或同类方块
+            // 2) 协议方法编码 FACING 等属性到 hitVec（如 V3 编码到 x 坐标）
+            //    litematica 原版 doEasyPlaceAction 也是这样两步走的
+            // 1) applyPlacementFacing corrects Direction (HALF: TOP→DOWN, BOTTOM→UP)
+            //    Pass AIR instead of water since the method expects air or same-type block
+            // 2) Protocol method encodes FACING etc. into hitVec (e.g. V3 encodes into x)
+            //    Same two-step approach as litematica's original doEasyPlaceAction
+            Direction correctedDir = invokeApplyPlacementFacing(
+                    stateSchematic, liquidTrace.getDirection(),
+                    net.minecraft.world.level.block.Blocks.AIR.defaultBlockState());
+
+            Vec3 hitPos = liquidTrace.getLocation();
+            fi.dy.masa.litematica.util.EasyPlaceProtocol protocol =
+                    fi.dy.masa.litematica.util.PlacementHandler.getEffectiveProtocolVersion();
+            if (protocol == fi.dy.masa.litematica.util.EasyPlaceProtocol.V3) {
+                hitPos = WorldUtils.applyPlacementProtocolV3(pos, stateSchematic, hitPos);
+            } else if (protocol == fi.dy.masa.litematica.util.EasyPlaceProtocol.V2) {
+                hitPos = WorldUtils.applyCarpetProtocolHitVec(pos, stateSchematic, hitPos);
+            } else if (protocol == fi.dy.masa.litematica.util.EasyPlaceProtocol.SLAB_ONLY) {
+                hitPos = invokeApplyBlockSlabProtocol(pos, stateSchematic, hitPos);
+            }
+
+            BlockHitResult placementHit = new BlockHitResult(
+                    hitPos, correctedDir, liquidTrace.getBlockPos(), liquidTrace.isInside());
+            if (mc.gameMode != null) {
+                mc.gameMode.useItemOn(player, hand, placementHit);
+            }
+
+            invokeSetEasyPlaceLastPickBlockTime();
+            cir.setReturnValue(InteractionResult.SUCCESS);
+            return;
         }
 
-        // 空位或其他方块 → 先放水
-        // Air or other → place water first
+        // 空位 → 先放水；液体已由上方分支处理；其他方块 → FAIL
+        // Air → place water first; liquid handled above; other blocks → FAIL
+        if (!stateClient.isAir() && !(stateClient.getBlock() instanceof LiquidBlock)) {
+            cir.setReturnValue(InteractionResult.FAIL);
+            return;
+        }
         placeWaterForWaterlogged(mc, player, schematicWorld, pos, cir);
     }
 
@@ -344,13 +436,15 @@ public abstract class MixinLitematicaWorldUtils {
             return;
         }
 
-        // 直接在原理图坐标放置水源 / Place water source directly at schematic position
+        // 客户端直接在原理图坐标放水，服务端通过 useItem 发包
+        // BucketItem 没有 useOn，所以必须走 useItem 路径
+        // Client: place water directly at schematic position
+        // Server: send packet via useItem (BucketItem has no useOn)
         ItemStack heldStack = player.getItemInHand(hand);
         if (heldStack.getItem() instanceof BucketItem bucketItem) {
             bucketItem.emptyContents(player, mc.level, pos, null);
         }
 
-        // 发包给服务端并完成物品交换 / Send packet to server and swap item
         if (mc.gameMode != null) {
             mc.gameMode.useItem(player, hand);
         }

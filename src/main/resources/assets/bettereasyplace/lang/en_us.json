@@ -16,9 +16,9 @@
   "bettereasyplace.config.name.allowShulkerBox": "Allow Shulker Box",
   "bettereasyplace.config.comment.allowShulkerBox": "If enabled, you can open placed shulker boxes while holding blocks, and place shulker boxes without Easy Place interception.",
   "bettereasyplace.config.name.allowLiquidPlacement": "Allow Liquid Placement",
-  "bettereasyplace.config.comment.allowLiquidPlacement": "If enabled, liquid source blocks in the schematic will be handled by Easy Place (auto-pick bucket, precise placement). Empty buckets will not be allowed to pick up schematic liquids.",
+  "bettereasyplace.config.comment.allowLiquidPlacement": "[Experimental] If enabled, liquid source blocks in the schematic will be handled by Easy Place (auto-pick bucket, precise placement). Empty buckets will not be allowed to pick up schematic liquids.",
   "bettereasyplace.config.name.allowWaterloggedPlacement": "Allow Waterlogged Placement",
-  "bettereasyplace.config.comment.allowWaterloggedPlacement": "If enabled, waterlogged blocks in the schematic will be handled by Easy Place (place water first, then block; or waterlog existing blocks). Requires both the block and a water bucket in inventory. Requires \"Allow Liquid Placement\" to also be enabled.",
+  "bettereasyplace.config.comment.allowWaterloggedPlacement": "[Experimental] If enabled, waterlogged blocks in the schematic will be handled by Easy Place (place water first, then block; or waterlog existing blocks). Requires both the block and a water bucket in inventory. Requires \"Allow Liquid Placement\" to also be enabled.",
   "modmenu.nameTranslation.bettereasyplace": "Better Easy Place",
   "modmenu.descriptionTranslation.bettereasyplace": "A mod that improves the easy place functionality of Litematica"
 }

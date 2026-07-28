@@ -56,6 +56,26 @@ public class Configs implements IConfigHandler {
             "If enabled, using fireworks while flying with elytra will not be blocked by Easy Place");
 
     /**
+     * 允许潜影盒 / Allow Shulker Box.
+     * <p>
+     * 启用后，在轻松放置模式下可以正常使用潜影盒：
+     * <ul>
+     *   <li>右键已放置的潜影盒可以打开（无论手持何物）</li>
+     *   <li>手持潜影盒右键直接放置（绕过轻松放置，由原版处理）</li>
+     * </ul>
+     * When enabled, shulker boxes work normally in Easy Place mode:
+     * <ul>
+     *   <li>Right-click a placed shulker box to open it (regardless of held item)</li>
+     *   <li>Right-click while holding a shulker box to place it (bypasses Easy Place)</li>
+     * </ul>
+     */
+    public static final ConfigBooleanHotkeyed ALLOW_SHULKER_BOX = new ConfigBooleanHotkeyed(
+            "allowShulkerBox",
+            false,
+            "",
+            "If enabled, placing and opening shulker boxes will not be blocked by Easy Place");
+
+    /**
      * 启用拦截方块黑名单 / Enable Block Blacklist.
      * <p>
      * 启用后，黑名单中的方块将不会被轻松放置模式拦截，允许直接放置。
@@ -87,6 +107,7 @@ public class Configs implements IConfigHandler {
     public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
             ALLOW_EATING,
             ALLOW_FIREWORK,
+            ALLOW_SHULKER_BOX,
             ENABLE_BLOCK_BLACKLIST,
             BLOCK_BLACKLIST
     );

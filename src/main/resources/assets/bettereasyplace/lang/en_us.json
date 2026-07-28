@@ -9,9 +9,11 @@
   "config.comment.alloweating": "If enabled, holding food and eating will not be blocked by Easy Place mode.",
   "config.name.allowfirework": "Allow Firework",
   "config.comment.allowfirework": "If enabled, using fireworks while flying with elytra will not be blocked by Easy Place mode.",
-  "config.name.enableblockblacklist": "Enable Block Blacklist",
+  "config.name.allowshulkerbox": "Allow Shulker Box",
+  "config.comment.allowshulkerbox": "If enabled, you can open placed shulker boxes while holding blocks, and place shulker boxes without Easy Place interception.",
+  "config.name.enableblockblacklist": "Enable Blocking Blacklist",
   "config.comment.enableblockblacklist": "If enabled, blocks in the blacklist will not be blocked by Easy Place mode.",
-  "config.name.blockblacklist": "Block Blacklist",
+  "config.name.blockblacklist": "Blocking Blacklist",
   "config.comment.blockblacklist": "Blocks listed here will not be blocked by Easy Place mode (one block ID per line, e.g. minecraft:chest).",
   "modmenu.nameTranslation.bettereasyplace": "Better Easy Place",
   "modmenu.descriptionTranslation.bettereasyplace": "A mod that improves the easy place functionality of Litematica"

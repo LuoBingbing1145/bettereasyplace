@@ -303,6 +303,44 @@ public abstract class MixinLitematicaWorldUtils {
     }
 
     /**
+     * 轻松放置成功后挥动手部 / Swing the player's hand on successful Easy Place.
+     * <p>
+     * <b>[移植自 Litematica 1.21+ 的 easyPlaceSwingHand 功能]</b>
+     * 此处将其移植到 1.20.X 版本，注入点选在 {@code doEasyPlaceAction} 的
+     * RETURN 处以同时覆盖 litematica 原版放置路径和本模组的液体/含水方块路径。
+     * <p>
+     * <b>[Backported from Litematica 1.21+ easyPlaceSwingHand feature]</b>
+     * Backported here to 1.20.X, injected at RETURN of {@code doEasyPlaceAction}
+     * to cover both litematica's vanilla placement path and this mod's
+     * liquid/waterlogged placement path.
+     * <p>
+     * 在 {@code doEasyPlaceAction} 返回 {@link InteractionResult#SUCCESS} 且配置项
+     * {@link Configs#EASY_PLACE_SWING_HAND} 启用时，触发一次玩家主手挥动动画。
+     * 无论方块是通过 litematica 原版逻辑放置，还是通过我们的液体/含水方块
+     * 逻辑放置，只要结果是 SUCCESS 就会触发。
+     * <p>
+     * When {@code doEasyPlaceAction} returns {@link InteractionResult#SUCCESS} and
+     * {@link Configs#EASY_PLACE_SWING_HAND} is enabled, triggers a main-hand swing
+     * animation.  This fires regardless of whether the block was placed via
+     * litematica's vanilla logic or via our liquid/waterlogged handling.
+     */
+    @Inject(method = "doEasyPlaceAction", at = @At("RETURN"))
+    private static void bettereasyplace$swingHandOnPlace(Minecraft mc, CallbackInfoReturnable<InteractionResult> cir) {
+        if (!Configs.EASY_PLACE_SWING_HAND.getBooleanValue()) {
+            return;
+        }
+
+        if (cir.getReturnValue() != InteractionResult.SUCCESS) {
+            return;
+        }
+
+        LocalPlayer player = mc.player;
+        if (player != null) {
+            player.swing(InteractionHand.MAIN_HAND);
+        }
+    }
+
+    /**
      * 处理含水方块的放置 / Handle waterlogged block placement.
      * <p>
      * 含水方块需要两个步骤：先放水，再放方块（方块放入水中自动含水）。

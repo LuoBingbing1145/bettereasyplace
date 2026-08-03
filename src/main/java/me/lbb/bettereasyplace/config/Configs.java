@@ -146,6 +146,28 @@ public class Configs implements IConfigHandler {
             "",
             "[Experimental] If enabled, waterlogged blocks in the schematic will be handled by Easy Place (place water first, then block; or waterlog existing blocks). Requires both block and water bucket in inventory. Requires \"Allow Liquid Placement\" to also be enabled.");
 
+    /**
+     * 轻松放置手部挥动 / Easy Place Swing Hand.
+     * <p>
+     * <b>[移植自 Litematica 1.21+]</b>
+     * 此处将其移植到 1.20.X 版本，以在旧版提供一致的体验。
+     * <p>
+     * <b>[Backported from Litematica 1.21+]</b>
+     * It is backported here to provide a consistent experience on 1.20.X.
+     * <p>
+     * 启用后，轻松放置模式每次成功放置方块时，玩家的手会执行一次挥动动画，
+     * 使放置操作看起来更自然。禁用则手部保持静止。
+     * <p>
+     * When enabled, the player's hand performs a swing animation each time a
+     * block is successfully placed via Easy Place mode, making placement feel
+     * more natural. When disabled, the hand remains static.
+     */
+    public static final ConfigBooleanHotkeyed EASY_PLACE_SWING_HAND = new ConfigBooleanHotkeyed(
+            "easyPlaceSwingHand",
+            false,
+            "",
+            "If enabled, the player's hand swings when Easy Place places a block");
+
     /** 所有通用配置项的不可变列表，用于批量读写 / Immutable list of all generic options for batch read/write. */
     public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
             ALLOW_EATING,
@@ -153,6 +175,7 @@ public class Configs implements IConfigHandler {
             ALLOW_LIQUID_PLACEMENT,
             ALLOW_WATERLOGGED_PLACEMENT,
             ALLOW_SHULKER_BOX,
+            EASY_PLACE_SWING_HAND,
             ENABLE_BLOCK_BLACKLIST,
             BLOCK_BLACKLIST
     );

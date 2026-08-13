@@ -3,8 +3,78 @@ plugins {
 	id 'maven-publish'
 }
 
+def mcVersion = project.findProperty('mcVersion') ?: '1.21'
 version = project.mod_version
 group = project.maven_group
+def versions = [
+		"1.21": [
+				loader: "0.19.3",
+				api: "0.102.0+1.21",
+				malilib: "C99LEy6r",
+				litematica: "o7i8oi1Z",
+				modmenu: "11.0.4"
+		],
+		"1.21.1": [
+				loader: "0.19.3",
+				api: "0.116.15+1.21.1",
+				malilib: "C99LEy6r",
+				litematica: "o7i8oi1Z",
+				modmenu: "11.0.4"
+		],
+		"1.21.2": [
+				loader: "0.19.3",
+				api: "0.106.1+1.21.2",
+				malilib: "YyAlxssn",
+				litematica: "diPHpcNy",
+				modmenu: "12.0.1"
+		],
+		"1.21.3": [
+				loader: "0.19.3",
+				api: "0.114.1+1.21.3",
+				malilib: "YyAlxssn",
+				litematica: "diPHpcNy",
+				modmenu: "12.0.1"
+		],
+		"1.21.4": [
+				loader: "0.19.3",
+				api: "0.119.4+1.21.4",
+				malilib: "ifi4uRpL",
+				litematica: "Z7jnVo9V",
+				modmenu: "13.0.4"
+		],
+		"1.21.5": [
+				loader: "0.19.3",
+				api: "0.128.2+1.21.5",
+				malilib: "YrRUsIk9",
+				litematica: "f9S0ZzGY",
+				modmenu: "14.0.2"
+		],
+		"1.21.6": [
+				loader: "0.19.3",
+				api: "0.128.2+1.21.6",
+				malilib: "2kC79eY3",
+				litematica: "GJMDd9Zq",
+				modmenu: "15.0.2"
+		],
+		"1.21.7": [
+				loader: "0.19.3",
+				api: "0.129.0+1.21.7",
+				malilib: "2kC79eY3",
+				litematica: "GJMDd9Zq",
+				modmenu: "15.0.2"
+		],
+		"1.21.8": [
+				loader: "0.19.3",
+				api: "0.136.1+1.21.8",
+				malilib: "2kC79eY3",
+				litematica: "GJMDd9Zq",
+				modmenu: "15.0.2"
+		]
+]
+def selected = versions[mcVersion]
+if (selected == null) {
+	throw new GradleException("Unsupported Minecraft version: ${mcVersion}")
+}
 
 repositories {
 	maven { url 'https://masa.dy.fi/maven' }
@@ -30,13 +100,13 @@ loom {
 }
 
 dependencies {
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	minecraft "com.mojang:minecraft:${mcVersion}"
 	mappings loom.officialMojangMappings()
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	modImplementation "maven.modrinth:GcWjdA9I:${project.malilib_version_id}"//malilib
-	modImplementation "maven.modrinth:bEpr0Arc:${project.litematica_version_id}"//litematica
-	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+	modImplementation "net.fabricmc:fabric-loader:${selected.loader}"
+	modImplementation "maven.modrinth:GcWjdA9I:${selected.malilib}"//malilib
+	modImplementation "maven.modrinth:bEpr0Arc:${selected.litematica}"//litematica
+	modImplementation "com.terraformersmc:modmenu:${selected.modmenu}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${selected.api}"
 }
 
 processResources {

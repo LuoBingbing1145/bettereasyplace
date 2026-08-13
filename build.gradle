@@ -3,8 +3,29 @@ plugins {
 	id 'maven-publish'
 }
 
+def mcVersion = project.findProperty('mcVersion') ?: '1.20.5'
 version = project.mod_version
 group = project.maven_group
+def versions = [
+		"1.20.5": [
+				loader: "0.19.3",
+				api: "0.97.8+1.20.5",
+				malilib: "WOM5o7Zn",
+				litematica: "h226Yxd4",
+				modmenu: "10.0.0"
+		],
+		"1.20.6": [
+				loader: "0.19.3",
+				api: "0.100.8+1.20.6",
+				malilib: "WOM5o7Zn",
+				litematica: "h226Yxd4",
+				modmenu: "10.0.0"
+		]
+]
+def selected = versions[mcVersion]
+if (selected == null) {
+	throw new GradleException("Unsupported Minecraft version: ${mcVersion}")
+}
 
 repositories {
 	maven { url 'https://masa.dy.fi/maven' }
@@ -30,13 +51,13 @@ loom {
 }
 
 dependencies {
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	minecraft "com.mojang:minecraft:${mcVersion}"
 	mappings loom.officialMojangMappings()
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	modImplementation "maven.modrinth:GcWjdA9I:${project.malilib_version_id}"//malilib
-	modImplementation "maven.modrinth:bEpr0Arc:${project.litematica_version_id}"//litematica
-	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+	modImplementation "net.fabricmc:fabric-loader:${selected.loader}"
+	modImplementation "maven.modrinth:GcWjdA9I:${selected.malilib}"//malilib
+	modImplementation "maven.modrinth:bEpr0Arc:${selected.litematica}"//litematica
+	modImplementation "com.terraformersmc:modmenu:${selected.modmenu}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${selected.api}"
 }
 
 processResources {

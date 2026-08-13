@@ -25,7 +25,9 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -168,6 +170,28 @@ public abstract class MixinLitematicaWorldUtils {
         if (shouldRestrictLiquidPickup(mc)) {
             cir.setReturnValue(true);
         }
+    }
+
+    /**
+     * 修改轻松放置保护范围的硬编码常量 / Modify the hardcoded Easy Place protection range.
+     * <p>
+     * Litematica 在 {@code placementRestrictionInEffect} 中硬编码了
+     * {@code isPositionWithinRangeOfSchematicRegions(pos, 2)} 的 range=2。
+     * 此注入将该常量替换为 {@link Configs#EASY_PLACE_PROTECTION_RANGE} 的值，
+     * 允许用户自定义投影区域周围的保护格数。
+     * <p>
+     * Litematica hardcodes {@code range = 2} in the call to
+     * {@code isPositionWithinRangeOfSchematicRegions(pos, 2)} inside
+     * {@code placementRestrictionInEffect}. This injection replaces that
+     * constant with the value of {@link Configs#EASY_PLACE_PROTECTION_RANGE},
+     * allowing users to customize the protection range around schematic regions.
+     *
+     * @param original Litematica 原始的硬编码值 2 / Litematica's original hardcoded value 2
+     * @return 用户配置的保护范围值 / the user-configured protection range
+     */
+    @ModifyConstant(method = "placementRestrictionInEffect", constant = @Constant(intValue = 2))
+    private static int bettereasyplace$modifyProtectionRange(int original) {
+        return Configs.EASY_PLACE_PROTECTION_RANGE.getIntegerValue();
     }
 
     /**

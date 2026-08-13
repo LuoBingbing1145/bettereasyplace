@@ -19,6 +19,8 @@
   "bettereasyplace.config.comment.allowLiquidPlacement": "[Experimental] If enabled, liquid source blocks in the schematic will be handled by Easy Place (auto-pick bucket, precise placement). Empty buckets will not be allowed to pick up schematic liquids.",
   "bettereasyplace.config.name.allowWaterloggedPlacement": "Allow Waterlogged Placement",
   "bettereasyplace.config.comment.allowWaterloggedPlacement": "[Experimental] If enabled, waterlogged blocks in the schematic will be handled by Easy Place (place water first, then block; or waterlog existing blocks). Requires both the block and a water bucket in inventory. Requires \"Allow Liquid Placement\" to also be enabled.",
+  "bettereasyplace.config.name.easyPlaceProtectionRange": "Easy Place Protection Range",
+  "bettereasyplace.config.comment.easyPlaceProtectionRange": "The range (in blocks) around schematic regions where non-schematic block placement is blocked. 0 = no protection, 2 = default Litematica behavior.",
   "modmenu.nameTranslation.bettereasyplace": "Better Easy Place",
   "modmenu.descriptionTranslation.bettereasyplace": "A mod that improves the easy place functionality of Litematica"
 }

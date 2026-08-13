@@ -7,6 +7,7 @@ import fi.dy.masa.malilib.config.ConfigUtils;
 import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.config.IConfigHandler;
 import fi.dy.masa.malilib.config.options.ConfigBooleanHotkeyed;
+import fi.dy.masa.malilib.config.options.ConfigInteger;
 import fi.dy.masa.malilib.config.options.ConfigStringList;
 import fi.dy.masa.malilib.util.FileUtils;
 import fi.dy.masa.malilib.util.JsonUtils;
@@ -153,13 +154,35 @@ public class Configs implements IConfigHandler {
             "[Experimental] If enabled, waterlogged blocks in the schematic will be handled by Easy Place (place water first, then block; or waterlog existing blocks). Requires both block and water bucket in inventory. Requires \"Allow Liquid Placement\" to also be enabled.")
             .apply("bettereasyplace.config");
 
+    /**
+     * 轻松放置保护范围 / Easy Place Protection Range.
+     * <p>
+     * 控制投影子区域周围的保护范围（格数）。在此范围内的非原理图方块放置
+     * 将被阻止，防止在投影边缘误放方块。设为 0 则无保护。
+     * 此配置通过 Mixin 修改 Litematica 内部硬编码的值（默认 2）。
+     * <p>
+     * Controls the protection range (in blocks) around schematic sub-regions.
+     * Non-schematic block placement within this range is blocked to prevent
+     * accidental misplacement near the schematic edges. Set to 0 for no protection.
+     * This config overrides Litematica's internal hardcoded value (default 2).
+     */
+    public static final ConfigInteger EASY_PLACE_PROTECTION_RANGE = new ConfigInteger(
+            "easyPlaceProtectionRange",
+            2,
+            0,
+            16,
+            false,
+            "The protection range (in blocks) around schematic regions\nwhere non-schematic block placement is blocked.\n0 = no protection, 2 = default Litematica behavior")
+            .apply("bettereasyplace.config");
+
     /** 所有通用配置项的不可变列表，用于批量读写 / Immutable list of all generic options for batch read/write. */
     public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
             ALLOW_EATING,
             ALLOW_FIREWORK,
-            ALLOW_SHULKER_BOX,
             ALLOW_LIQUID_PLACEMENT,
             ALLOW_WATERLOGGED_PLACEMENT,
+            ALLOW_SHULKER_BOX,
+            EASY_PLACE_PROTECTION_RANGE,
             ENABLE_BLOCK_BLACKLIST,
             BLOCK_BLACKLIST
     );

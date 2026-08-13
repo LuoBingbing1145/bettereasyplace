@@ -9,7 +9,8 @@
 	],
 	"contact": {
 		"sources": "https://github.com/LuoBingbing1145/bettereasyplace",
-		"issues": "https://github.com/LuoBingbing1145/bettereasyplace/issues"
+		"issues": "https://github.com/LuoBingbing1145/bettereasyplace/issues",
+		"homepage": "https://modrinth.com/mod/bettereasyplace"
 	},
 	"license": "MIT",
 	"icon": "assets/bettereasyplace/icon.png",

@@ -19,6 +19,8 @@
   "bettereasyplace.config.comment.allowLiquidPlacement": "[实验性功能] 启用后，轻松放置模式下自动切换至水桶/岩浆桶并精确放置原理图中的液体源方块。放置后空桶不会被允许回收液体。",
   "bettereasyplace.config.name.allowWaterloggedPlacement": "允许含水方块放置",
   "bettereasyplace.config.comment.allowWaterloggedPlacement": "[实验性功能] 启用后，轻松放置模式下自动处理原理图中的含水方块：先放水源再放方块（方块放入水中自动含水），或对已放置方块用水桶含水。需要背包中同时有对应方块和水桶。需要同时启用\"允许液体放置\"。",
+  "bettereasyplace.config.name.easyPlaceProtectionRange": "轻松放置保护范围",
+  "bettereasyplace.config.comment.easyPlaceProtectionRange": "在原理图投影区域周围多少格范围内阻止非原理图方块放置。0 = 无保护，2 = Litematica 默认行为。",
   "modmenu.nameTranslation.bettereasyplace": "更好的轻松放置",
   "modmenu.descriptionTranslation.bettereasyplace": "一个改进 Litematica 的轻松放置功能的模组"
 }

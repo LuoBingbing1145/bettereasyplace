@@ -1,6 +1,6 @@
 # BetterEasyPlace
 
-[中文版本](README_ZH_CN.md)
+English | [中文](README_ZH_CN.md)
 
 A Fabric mod that improves Litematica's Easy Place functionality.
 

@@ -1,6 +1,6 @@
 # BetterEasyPlace
 
-[English version](README.md)
+[English](README.md) | 中文
 
 一个改进 Litematica 轻松放置功能的 Fabric 模组。
 

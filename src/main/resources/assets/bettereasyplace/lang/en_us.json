@@ -21,6 +21,8 @@
   "config.comment.allowwaterloggedplacement": "[Experimental] If enabled, waterlogged blocks in the schematic will be handled by Easy Place (place water first, then block; or waterlog existing blocks). Requires both the block and a water bucket in inventory. Requires \"Allow Liquid Placement\" to also be enabled.",
   "config.name.easyplaceswinghand": "Easy Place Swing Hand [Backported from 1.21+]",
   "config.comment.easyplaceswinghand": "If enabled, the player's hand swings when Easy Place places a block. (Feature backported from Litematica 1.21+)",
+  "config.name.easyplaceprotectionrange": "Easy Place Protection Range",
+  "config.comment.easyplaceprotectionrange": "The range (in blocks) around schematic regions where non-schematic block placement is blocked. 0 = no protection, 2 = default Litematica behavior.",
   "modmenu.nameTranslation.bettereasyplace": "Better Easy Place",
   "modmenu.descriptionTranslation.bettereasyplace": "A mod that improves the easy place functionality of Litematica"
 }

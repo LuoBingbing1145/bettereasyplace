@@ -21,6 +21,8 @@
   "config.comment.allowwaterloggedplacement": "[实验性功能] 启用后，轻松放置模式下自动处理原理图中的含水方块：先放水源再放方块（方块放入水中自动含水），或对已放置方块用水桶含水。需要背包中同时有对应方块和水桶。需要同时启用\"允许液体放置\"。",
   "config.name.easyplaceswinghand": "轻松放置手部挥动 [移植自 1.21+]",
   "config.comment.easyplaceswinghand": "启用后，轻松放置每次成功放置方块时手部会执行挥动动画，使放置看起来更自然。（功能移植自 Litematica 1.21+）",
+  "config.name.easyplaceprotectionrange": "轻松放置保护范围",
+  "config.comment.easyplaceprotectionrange": "在原理图投影区域周围多少格范围内阻止非原理图方块放置。0 = 无保护，2 = Litematica 默认行为。",
   "modmenu.nameTranslation.bettereasyplace": "更好的轻松放置",
   "modmenu.descriptionTranslation.bettereasyplace": "一个改进 Litematica 的轻松放置功能的模组"
 }

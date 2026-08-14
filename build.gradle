@@ -1,18 +1,39 @@
 plugins {
-	id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
 	id 'maven-publish'
 }
 
-def mcVersion = project.findProperty('mcVersion') ?: '1.21.11'
+def mcVersion = project.findProperty('mcVersion') ?: '26.1'
 version = project.mod_version
 group = project.maven_group
 def versions = [
-		"1.21.11": [
+		"26.1": [
 				loader: "0.19.3",
-				api: "0.141.6+1.21.11",
-				malilib: "oaU4Ys3J",
-				litematica: "b3dJnV8d",
-				modmenu: "17.0.0"
+				api: "0.145.1+26.1",
+				malilib: "xGyGn0t9",
+				litematica: "MRcKRVoi",
+				modmenu: "18.0.0"
+		],
+		"26.1.1": [
+				loader: "0.19.3",
+				api: "0.145.4+26.1.1",
+				malilib: "xGyGn0t9",
+				litematica: "MRcKRVoi",
+				modmenu: "18.0.0"
+		],
+		"26.1.2": [
+				loader: "0.19.3",
+				api: "0.155.2+26.1.2",
+				malilib: "xGyGn0t9",
+				litematica: "MRcKRVoi",
+				modmenu: "18.0.0"
+		],
+		"26.2": [
+				loader: "0.19.3",
+				api: "0.157.0+26.2",
+				malilib: "xKxhjDJ2",
+				litematica: "jzraAo7b",
+				modmenu: "20.0.1"
 		]
 ]
 def selected = versions[mcVersion]
@@ -45,12 +66,11 @@ loom {
 
 dependencies {
 	minecraft "com.mojang:minecraft:${mcVersion}"
-	mappings loom.officialMojangMappings()
-	modImplementation "net.fabricmc:fabric-loader:${selected.loader}"
-	modImplementation "maven.modrinth:GcWjdA9I:${selected.malilib}"//malilib
-	modImplementation "maven.modrinth:bEpr0Arc:${selected.litematica}"//litematica
-	modImplementation "com.terraformersmc:modmenu:${selected.modmenu}"
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${selected.api}"
+	implementation "net.fabricmc:fabric-loader:${selected.loader}"
+	implementation "maven.modrinth:GcWjdA9I:${selected.malilib}"//malilib
+	implementation "maven.modrinth:bEpr0Arc:${selected.litematica}"//litematica
+	implementation "com.terraformersmc:modmenu:${selected.modmenu}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${selected.api}"
 }
 
 processResources {
@@ -63,13 +83,13 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 17
+	it.options.release = 25
 }
 
 java {
 	withSourcesJar()
-	sourceCompatibility = JavaVersion.VERSION_17
-	targetCompatibility = JavaVersion.VERSION_17
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
 }
 
 jar {

@@ -35,8 +35,8 @@
 	],
 	"depends": {
 		"fabricloader": "*",
-		"minecraft": "1.21.11",
-		"java": ">=17",
+		"minecraft": ">=26.1 <=26.2",
+		"java": ">=25",
 		"litematica": ">=0.26.12",
 		"malilib": ">=0.26.0"
 	},

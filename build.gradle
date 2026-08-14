@@ -3,24 +3,10 @@ plugins {
 	id 'maven-publish'
 }
 
-def mcVersion = project.findProperty('mcVersion') ?: '1.21.9'
+def mcVersion = project.findProperty('mcVersion') ?: '1.21.11'
 version = project.mod_version
 group = project.maven_group
 def versions = [
-		"1.21.9": [
-				loader: "0.19.3",
-				api: "0.134.1+1.21.9",
-				malilib: "VwmyInJJ",
-				litematica: "c91sTAlP",
-				modmenu: "16.0.1"
-		],
-		"1.21.10": [
-				loader: "0.19.3",
-				api: "0.138.4+1.21.10",
-				malilib: "VwmyInJJ",
-				litematica: "c91sTAlP",
-				modmenu: "16.0.1"
-		],
 		"1.21.11": [
 				loader: "0.19.3",
 				api: "0.141.6+1.21.11",

@@ -1,7 +1,6 @@
 package me.lbb.bettereasyplace.config;
 
 import com.google.common.collect.ImmutableList;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import fi.dy.masa.malilib.config.ConfigUtils;
 import fi.dy.masa.malilib.config.IConfigBase;
@@ -10,7 +9,7 @@ import fi.dy.masa.malilib.config.options.ConfigBooleanHotkeyed;
 import fi.dy.masa.malilib.config.options.ConfigInteger;
 import fi.dy.masa.malilib.config.options.ConfigStringList;
 import fi.dy.masa.malilib.util.FileUtils;
-import fi.dy.masa.malilib.util.JsonUtils;
+import fi.dy.masa.malilib.util.data.json.JsonUtils;
 import me.lbb.bettereasyplace.Reference;
 
 import java.nio.file.Files;
@@ -194,17 +193,17 @@ public class Configs implements IConfigHandler {
      * Reads options under both the {@code Generic} and {@code Hotkeys} categories.
      */
     public static void loadFromFile() {
-        Path configFile = FileUtils.getConfigDirectoryAsPath().resolve(CONFIG_FILE_NAME);
+        Path configFile = FileUtils.getConfigDirectory().resolve(CONFIG_FILE_NAME);
 
         if (Files.exists(configFile) && Files.isRegularFile(configFile) && Files.isReadable(configFile)) {
-            JsonElement element = JsonUtils.parseJsonFileAsPath(configFile);
+            JsonUtils.loadFromFile(configFile, element -> {
+                if (element != null && element.isJsonObject()) {
+                    JsonObject root = element.getAsJsonObject();
 
-            if (element != null && element.isJsonObject()) {
-                JsonObject root = element.getAsJsonObject();
-
-                ConfigUtils.readConfigBase(root, "Generic", OPTIONS);
-                ConfigUtils.readConfigBase(root, "Hotkeys", Hotkeys.HOTKEY_LIST);
-            }
+                    ConfigUtils.readConfigBase(root, "Generic", OPTIONS);
+                    ConfigUtils.readConfigBase(root, "Hotkeys", Hotkeys.HOTKEY_LIST);
+                }
+            });
         }
     }
 
@@ -216,7 +215,7 @@ public class Configs implements IConfigHandler {
      * into the JSON file.
      */
     public static void saveToFile() {
-        Path dir = FileUtils.getConfigDirectoryAsPath();
+        Path dir = FileUtils.getConfigDirectory();
 
         if (FileUtils.createDirectoriesIfMissing(dir)) {
             JsonObject root = new JsonObject();
@@ -224,7 +223,7 @@ public class Configs implements IConfigHandler {
             ConfigUtils.writeConfigBase(root, "Generic", OPTIONS);
             ConfigUtils.writeConfigBase(root, "Hotkeys", Hotkeys.HOTKEY_LIST);
 
-            JsonUtils.writeJsonToFileAsPath(root, dir.resolve(CONFIG_FILE_NAME));
+            JsonUtils.writeJsonToFile(root, dir.resolve(CONFIG_FILE_NAME));
         }
     }
 

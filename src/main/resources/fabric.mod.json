@@ -37,7 +37,7 @@
 		"fabricloader": "*",
 		"minecraft": "1.21.11",
 		"java": ">=17",
-		"litematica": "*",
+		"litematica": ">=0.26.12",
 		"malilib": ">=0.26.0"
 	},
 	"suggests": {

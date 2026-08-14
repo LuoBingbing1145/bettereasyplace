@@ -19,12 +19,13 @@ While Easy Place is active, Litematica blocks all right-click actions — includ
 
 ## Supported Versions
 
-| Branch | Minecraft        |
-|--------|------------------|
-| 1.20   | 1.20 – 1.20.4    |
-| 1.20.5 | 1.20.5 - 1.20.6  |
-| 1.21   | 1.21 - 1.21.8    |
-| 1.21.9 | 1.21.9 - 1.21.11 |
+| Branch  | Minecraft        |
+|---------|------------------|
+| 1.20    | 1.20 – 1.20.4    |
+| 1.20.5  | 1.20.5 - 1.20.6  |
+| 1.21    | 1.21 - 1.21.8    |
+| 1.21.9  | 1.21.9 - 1.21.10 |
+| 1.21.11 | 1.21.11          |
 
 ## Requirements
 

@@ -14,7 +14,7 @@
 	},
 	"license": "MIT",
 	"icon": "assets/bettereasyplace/icon.png",
-	"environment": "*",
+	"environment": "client",
 	"entrypoints": {
 		"main": [
 			"me.lbb.bettereasyplace.BetterEasyPlace"

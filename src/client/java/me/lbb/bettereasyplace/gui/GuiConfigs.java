@@ -135,9 +135,7 @@ public class GuiConfigs extends GuiConfigsBase {
         @Override
         public void actionPerformedWithButton(ButtonBase button, int mouseButton) {
             GuiConfigs.tab = this.tab;
-            if (this.gui.minecraft != null) {
-                this.gui.init(this.gui.minecraft, this.gui.width, this.gui.height);
-            }
+            this.gui.init();
         }
     }
 

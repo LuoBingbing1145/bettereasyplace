@@ -34,6 +34,10 @@
 - [MaLiLib](https://modrinth.com/mod/malilib)
 - [ModMenu](https://modrinth.com/mod/modmenu)（可选，用于配置界面）
 
+## 下载
+
+- [Modrinth](https://modrinth.com/mod/bettereasyplace/versions)
+
 ## License
 
 MIT

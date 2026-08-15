@@ -34,6 +34,10 @@ While Easy Place is active, Litematica blocks all right-click actions — includ
 - [MaLiLib](https://modrinth.com/mod/malilib)
 - [ModMenu](https://modrinth.com/mod/modmenu) (optional, for config screen)
 
+## Download
+
+- [Modrinth](https://modrinth.com/mod/bettereasyplace/versions)
+
 ## License
 
 MIT
